@@ -19,3 +19,4 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SIMULADOR_DE_RAYOS_X_MAMOGRA }}
           projectId: simulador-de-rayos-x-mamogra
+          entryPoint: .
