@@ -16,6 +16,13 @@
 
 ---
 
+Sites for project simulador-de-rayos-x-mamogra
+
+┌──────────────────────────────┬──────────────────────────────────────────────┬─────────────────┐
+│ Site ID                      │ Default URL                                  │ App ID (if set) │
+├──────────────────────────────┼──────────────────────────────────────────────┼─────────────────┤
+│ simulador-de-rayos-x-mamogra │ https://simulador-de-rayos-x-mamogra.web.app │ --              │
+└──────────────────────────────┴──────────────────────────────────────────────┴─────────────────┘
 ## 📋 Descripción
 
 **Simulador de Mamografía - Radiología Pro** es una aplicación web educativa diseñada para la formación de estudiantes de medicina, radiología y profesionales afines en el campo de la diagnóstico por imagen. 
