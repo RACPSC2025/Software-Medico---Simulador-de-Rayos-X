@@ -98,13 +98,12 @@ const PatientRegistration = ({ onProceed, userEmail }: { onProceed: (patient: Pa
 
   return (
     <form 
-      className="h-full flex flex-col p-4 md:p-6 max-w-lg mx-auto overflow-y-auto"
+      className="h-full flex flex-col p-2 md:p-4 max-w-lg mx-auto overflow-hidden bg-transparent"
       onSubmit={(e) => {
         e.preventDefault();
         if (isValid) {
           onProceed(patient);
         } else {
-          // Si intentan enviar y no es válido, marcamos todo como "tocado" para mostrar errores
           setTouched({
             id: true,
             name: true,
@@ -113,12 +112,17 @@ const PatientRegistration = ({ onProceed, userEmail }: { onProceed: (patient: Pa
         }
       }}
     >
-      <div className="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
-        <h4 className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-2">
-          <FileText size={16} /> Datos de Paciente
-        </h4>
+      <div className="bg-white dark:bg-[#161920] p-4 md:p-5 rounded-2xl border border-slate-200 dark:border-border-dark/40 medical-shadow space-y-4 backdrop-blur-md transition-all duration-300">
+        <div className="flex items-center justify-between">
+          <h4 className="text-xs font-black text-text-title dark:text-primary uppercase tracking-[0.1em] flex items-center gap-2">
+            <FileText size={14} /> Ficha Médica
+          </h4>
+          <div className="px-2 py-0.5 rounded-full bg-primary/5 border border-primary/20 text-[9px] font-bold text-primary dark:text-primary/60 uppercase tracking-tighter">
+            ID: {patient.id || '---'}
+          </div>
+        </div>
         
-        <div className="space-y-4">
+        <div className="space-y-3">
           <Input 
             label="ID del Paciente" 
             icon={IdCard} 
@@ -149,14 +153,14 @@ const PatientRegistration = ({ onProceed, userEmail }: { onProceed: (patient: Pa
           />
           
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Sexo</label>
-            <div className="flex gap-3">
+            <label className="text-[10px] font-bold text-text-secondary dark:text-slate-500 uppercase tracking-widest ml-1">Sexo</label>
+            <div className="flex gap-2">
               {['Masculino', 'Femenino'].map(s => (
                 <button 
                   key={s} 
                   type="button"
                   onClick={() => handleChange('sex', s)}
-                  className={`flex-1 py-2.5 text-center rounded-xl border transition-all text-xs font-bold ${patient.sex === s ? 'border-primary bg-primary/10 text-primary' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:border-primary'}`}
+                  className={`flex-1 py-2 text-center rounded-xl border transition-all text-[11px] font-bold ${patient.sex === s ? 'border-primary bg-primary/5 text-primary shadow-sm dark:shadow-[0_0_15px_rgba(var(--medical-accent-rgb),0.2)]' : 'border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-[#0a0a0b] text-text-secondary dark:text-slate-500 hover:border-primary/50'}`}
                 >
                   {s}
                 </button>
@@ -165,11 +169,20 @@ const PatientRegistration = ({ onProceed, userEmail }: { onProceed: (patient: Pa
           </div>
         </div>
 
-        <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800/60">
+        {/* Aviso de Seguridad Premium Medical */}
+        <div className="bg-[#FEF9C3] dark:bg-amber-900/10 border border-[#FDE68A] dark:border-amber-900/30 p-2.5 rounded-xl flex gap-3 items-center mt-1 transition-all">
+          <AlertTriangle className="text-[#F59E0B] dark:text-[#FFF01F] shrink-0" size={16} />
+          <p className="text-[10px] text-[#78350F] dark:text-amber-200/80 leading-tight font-semibold">
+            <span className="font-black uppercase mr-1.5 tracking-tighter">Protocolo:</span>
+            Verificar estado de embarazo en pacientes fértiles antes de la exposición.
+          </p>
+        </div>
+
+        <div className="pt-3 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-border-dark/60">
           <Button 
             variant="outline" 
             type="button"
-            className="px-5 py-2.5 text-xs"
+            className="px-4 py-2 text-[10px] font-bold"
             onClick={() => {
               setPatient({ id: '', name: '', age: '', sex: 'Masculino', technician: userEmail });
               setTouched({});
@@ -180,19 +193,11 @@ const PatientRegistration = ({ onProceed, userEmail }: { onProceed: (patient: Pa
           <Button 
             icon={Play} 
             type="submit"
-            className="px-7 py-2.5 text-sm shadow-md"
+            className="px-6 py-2 text-xs"
             disabled={!isValid}
           >
             Iniciar Examen
           </Button>
-        </div>
-      </div>
-
-      <div className="mt-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50 p-2 rounded-xl flex gap-3">
-        <AlertTriangle className="text-amber-600 shrink-0" size={16} />
-        <div>
-          <p className="text-[9px] font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider">Seguridad Radiológica</p>
-          <p className="text-[9px] text-amber-700 dark:text-amber-500/80 leading-tight">Confirmar estado de embarazo para todas las pacientes en edad reproductiva antes de proceder.</p>
         </div>
       </div>
     </form>

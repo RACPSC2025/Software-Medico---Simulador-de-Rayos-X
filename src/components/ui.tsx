@@ -60,11 +60,11 @@ import { Screen, Patient } from "../types";
 
 const Button = ({ children, onClick, variant = 'primary', className = '', icon: Icon, disabled = false }: any) => {
   const variants: any = {
-    primary: 'bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/20',
-    secondary: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700',
-    danger: 'bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-900/20',
-    ghost: 'text-slate-500 hover:text-primary transition-colors',
-    outline: 'border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+    primary: 'bg-[#1152d4] text-white hover:bg-[#1152d4]/90 shadow-md font-bold active:scale-[0.98] transition-all duration-300',
+    secondary: 'bg-white dark:bg-[#1E2229] text-text-secondary dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-[#252A33] border border-slate-200 dark:border-border-dark/50 transition-all',
+    danger: 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-500 border border-red-100 dark:border-red-500/20 hover:bg-red-600 hover:text-white transition-all',
+    ghost: 'text-text-secondary dark:text-slate-500 hover:text-[#1152d4] transition-colors',
+    outline: 'border border-slate-200 dark:border-border-dark/60 text-text-secondary dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-[#161920] hover:text-[#1152d4] hover:border-[#1152d4]/50'
   };
 
   return (
@@ -78,11 +78,12 @@ const Button = ({ children, onClick, variant = 'primary', className = '', icon: 
     </button>
   );
 };
+
 const Input = ({ label, icon: Icon, type = 'text', placeholder, value, onChange, onBlur, readOnly = false, className = '', error }: any) => (
   <div className={`flex flex-col gap-1.5 ${className}`}>
-    {label && <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{label}</label>}
+    {label && <label className="text-[10px] font-bold text-text-secondary dark:text-slate-500 uppercase tracking-[0.1em] ml-1">{label}</label>}
     <div className="relative">
-      {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />}
+      {Icon && <Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary/50 dark:text-slate-500" size={16} />}
       <input
         type={type}
         placeholder={placeholder}
@@ -90,7 +91,7 @@ const Input = ({ label, icon: Icon, type = 'text', placeholder, value, onChange,
         onChange={onChange}
         onBlur={onBlur}
         readOnly={readOnly}
-        className={`w-full ${Icon ? 'pl-9' : 'pl-3'} pr-3 py-2.5 bg-slate-50 dark:bg-slate-800/50 border ${error ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-slate-200 dark:border-slate-700 focus:ring-primary focus:border-primary'} rounded-lg focus:ring-2 text-sm transition-all outline-none ${readOnly ? 'cursor-not-allowed opacity-70' : ''}`}
+        className={`w-full ${Icon ? 'pl-11' : 'pl-4'} pr-4 py-2.5 bg-white dark:bg-[#121418] border ${error ? 'border-red-500/50' : 'border-slate-200 dark:border-border-dark'} focus:border-primary rounded-xl focus:ring-4 focus:ring-primary/5 text-text-title dark:text-white text-sm transition-all duration-300 outline-none placeholder:text-text-secondary/40 dark:placeholder:text-slate-700 ${readOnly ? 'cursor-not-allowed opacity-70' : ''} shadow-sm dark:shadow-inner`}
       />
     </div>
     {error && <p className="text-[10px] text-red-500 font-medium mt-0.5">{error}</p>}

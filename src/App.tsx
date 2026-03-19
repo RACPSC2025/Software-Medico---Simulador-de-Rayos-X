@@ -11,6 +11,20 @@ import { ProfessionalDirectory } from "./modules/directory";
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('login');
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('theme-mode');
+    return saved ? saved === 'dark' : true; // Default to dark
+  });
+
+  useEffect(() => {
+    localStorage.setItem('theme-mode', isDarkMode ? 'dark' : 'light');
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
   const [selectedStudy, setSelectedStudy] = useState<string>('Radiografía de Tórax');
   const [currentPatient, setCurrentPatient] = useState<Patient | null>(null);
   const [capturedImages, setCapturedImages] = useState<{[key: string]: string}>({});
@@ -65,7 +79,7 @@ export default function App() {
 
   const renderScreen = () => {
     switch (screen) {
-      case 'login': return <LoginScreen onNavigate={handleNavigate} onLogin={setUserEmail} />;
+      case 'login': return <LoginScreen onNavigate={handleNavigate} onLogin={setUserEmail} isDarkMode={isDarkMode} onToggleTheme={() => setIsDarkMode(!isDarkMode)} />;
       case 'register': return <RegisterScreen onNavigate={handleNavigate} />;
       case 'recovery': return <RecoveryScreen onNavigate={handleNavigate} />;
       case 'educational-workspace':
@@ -74,6 +88,8 @@ export default function App() {
             userEmail={userEmail} 
             activeScreen={screen} 
             onNavigate={handleNavigate}
+            isDarkMode={isDarkMode}
+            onToggleTheme={() => setIsDarkMode(!isDarkMode)}
           >
             <EducationalWorkspace 
               onNavigate={(s, simData) => {
@@ -93,6 +109,8 @@ export default function App() {
             userEmail={userEmail} 
             activeScreen={screen} 
             onNavigate={handleNavigate}
+            isDarkMode={isDarkMode}
+            onToggleTheme={() => setIsDarkMode(!isDarkMode)}
           >
             <ExportScreen 
               patient={currentPatient} 
@@ -104,7 +122,13 @@ export default function App() {
         );
       default:
         return (
-          <DashboardLayout currentScreen={screen} onNavigate={handleNavigate} userEmail={userEmail}>
+          <DashboardLayout 
+            currentScreen={screen} 
+            onNavigate={handleNavigate} 
+            userEmail={userEmail}
+            isDarkMode={isDarkMode}
+            onToggleTheme={() => setIsDarkMode(!isDarkMode)}
+          >
             {screen === 'patient-registration' && (
               <PatientRegistration 
                 onProceed={(patient) => {
@@ -130,15 +154,15 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className={`min-h-screen ${isDarkMode ? 'dark bg-background-dark' : 'bg-background-light'} transition-colors duration-300`}>
       <AnimatePresence mode="wait">
         <motion.div
           key={screen}
-          initial={{ opacity: 0, x: 20 }}
+          initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.2 }}
-          className="min-h-screen"
+          exit={{ opacity: 0, x: -10 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+          className="min-h-screen flex flex-col"
         >
           {renderScreen()}
         </motion.div>

@@ -113,7 +113,14 @@ El sistema tiene como fundamento principal la **educación médica**, permitiend
 | **Estilos** | Tailwind CSS | 4.1.14 |
 | **Animaciones** | Motion | 12.23.24 |
 | **Iconos** | Lucide React | 0.546.0 |
-| **Estado** | React Hooks | - |
+| **Hosting & Cloud** | Firebase | Hosting |
+| **CI / CD** | GitHub Actions | Workflows |
+
+### Infraestructura y Despliegue
+
+- 🚀 **Firebase Hosting**: Entrega de contenido ultra rápida a través de una CDN global con SSL automático.
+- 🤖 **CI/CD Automatizado**: Flujo de trabajo mediante GitHub Actions que automatiza el build y deploy en cada push a la rama principal.
+- 🌍 **PWA Ready**: Configurado para ofrecer una experiencia fluida y rápida en cualquier navegador.
 
 ### Características Técnicas
 
