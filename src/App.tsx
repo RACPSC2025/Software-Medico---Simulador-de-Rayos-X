@@ -39,7 +39,8 @@ export default function App() {
     validatedIndices: [] as number[],
     viewMode: 4,
     zoomStates: {} as {[key: number]: number},
-    panStates: {} as {[key: number]: {x: number, y: number}}
+    panStates: {} as {[key: number]: {x: number, y: number}},
+    protesisType: 'sin-protesis' as 'sin-protesis' | 'con-protesis'
   });
 
   const handleAcceptSimulation = (projectionId: string, imageUrl: string) => {
@@ -73,7 +74,8 @@ export default function App() {
       validatedIndices: [],
       viewMode: 4,
       zoomStates: {},
-      panStates: {}
+      panStates: {},
+      protesisType: 'sin-protesis'
     });
   };
 
@@ -105,16 +107,17 @@ export default function App() {
         );
       case 'export-share':
         return (
-          <DashboardLayout 
-            userEmail={userEmail} 
-            activeScreen={screen} 
+          <DashboardLayout
+            userEmail={userEmail}
+            activeScreen={screen}
             onNavigate={handleNavigate}
             isDarkMode={isDarkMode}
             onToggleTheme={() => setIsDarkMode(!isDarkMode)}
           >
-            <ExportScreen 
-              patient={currentPatient} 
-              capturedImages={capturedImages} 
+            <ExportScreen
+              patient={currentPatient}
+              capturedImages={capturedImages}
+              workspaceState={workspaceState}
               onBack={() => handleNavigate('educational-workspace')}
               onFinish={() => handleNavigate('patient-registration')}
             />

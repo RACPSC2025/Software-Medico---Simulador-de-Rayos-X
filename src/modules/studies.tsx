@@ -175,10 +175,21 @@ const ProjectionList = ({
                       <Check size={12} className="text-emerald-500" strokeWidth={3} />
                     </div>
                   )}
+                  {item.isEklund && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-amber-500/90 text-[6px] font-black text-white text-center py-0.5">
+                      EKLUND
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-col items-start overflow-hidden flex-1">
                   <span className="text-[9px] font-bold text-text-title dark:text-slate-200 truncate w-full leading-tight">{item.title}</span>
                   <span className="text-[7px] text-text-secondary dark:text-slate-500 font-mono leading-none">{item.id}</span>
+                  {item.hasProtesis && !item.isEklund && (
+                    <span className="text-[6px] text-amber-400 font-bold uppercase">Con Prótesis</span>
+                  )}
+                  {item.isEklund && (
+                    <span className="text-[6px] text-emerald-400 font-bold uppercase">Técnica Eklund</span>
+                  )}
                 </div>
                 {isValidated && <CheckCircle2 size={10} className="text-emerald-500 shrink-0" />}
               </button>
@@ -225,18 +236,26 @@ const EducationalWorkspace = ({
   workspaceState: any,
   setWorkspaceState: any
 }) => {
-  const { 
-    selectedRegion, 
-    selectedProjectionIndex, 
-    selectedProjectionIndices, 
-    validatedIndices, 
-    viewMode, 
-    zoomStates, 
-    panStates 
+  const {
+    selectedRegion,
+    selectedProjectionIndex,
+    selectedProjectionIndices,
+    validatedIndices,
+    viewMode,
+    zoomStates,
+    panStates,
+    protesisType: workspaceProtesisType
   } = workspaceState;
 
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+  const [slotPage, setSlotPage] = useState(0); // Para modo 8 vistas (0 = primeras 4, 1 = últimas 4)
+  const [protesisType, setProtesisType] = useState<'sin-protesis' | 'con-protesis'>(workspaceProtesisType || 'sin-protesis');
+
+  // Sincronizar estado local con workspaceState cuando cambie
+  useEffect(() => {
+    setProtesisType(workspaceProtesisType || 'sin-protesis');
+  }, [workspaceProtesisType]);
 
   const toggleValidation = (index: number) => {
     setWorkspaceState((prev: any) => ({
@@ -262,10 +281,13 @@ const EducationalWorkspace = ({
       selectedRegion: region,
       selectedProjectionIndex: 0,
       validatedIndices: [],
-      selectedProjectionIndices: region === 'chest' ? [0, 1, 2, 3] : [],
+      selectedProjectionIndices: region === 'chest' && prev.protesisType === 'sin-protesis' ? [0, 1, 2, 3] :
+                               region === 'chest' && prev.protesisType === 'con-protesis' ? [0, 1, 2, 3, 4, 5, 6, 7] : [],
       zoomStates: {},
       panStates: {}
     }));
+    setSlotPage(0);
+    setProtesisType('sin-protesis'); // Reset al cambiar región
   };
 
   const setSelectedProjectionIndex = (index: number) => {
@@ -274,25 +296,80 @@ const EducationalWorkspace = ({
 
   const setViewMode = (mode: number) => {
     setWorkspaceState((prev: any) => ({ ...prev, viewMode: mode }));
+    setSlotPage(0);
+  };
+
+  const getSimulationParams = (id: string, title: string) => {
+    // Parámetros específicos para cada mamografía
+    const mammoParams: { [key: string]: { kvp: number; mas: number } } = {
+      // Sin prótesis
+      'M-01': { kvp: 28, mas: 80 },  // MAMA CC D
+      'M-02': { kvp: 28, mas: 80 },  // MAMA CC I
+      'M-03': { kvp: 30, mas: 100 }, // MAMA MLO D
+      'M-04': { kvp: 30, mas: 100 }, // MAMA MLO I
+      // Con prótesis (sin Eklund)
+      'M-05': { kvp: 30, mas: 90 },  // MAMA CC D PROTESIS
+      'M-06': { kvp: 30, mas: 90 },  // MAMA CC I PROTESIS
+      'M-07': { kvp: 32, mas: 110 }, // MAMA MLO D PROTESIS
+      'M-08': { kvp: 32, mas: 110 }, // MAMA MLO I PROTESIS
+      // Con prótesis - Técnica Eklund
+      'M-09': { kvp: 30, mas: 90 },  // MAMA CC D PROTESIS EKLUND
+      'M-10': { kvp: 30, mas: 90 },  // MAMA CC I PROTESIS EKLUND
+      'M-11': { kvp: 32, mas: 110 }, // MAMA MLO D PROTESIS EKLUND
+      'M-12': { kvp: 32, mas: 110 }, // MAMA MLO I PROTESIS EKLUND
+    };
+    
+    if (mammoParams[id]) {
+      return mammoParams[id];
+    }
+    
+    // Default para otras proyecciones
+    return { kvp: 110, mas: 5 };
   };
 
   const getProjections = () => {
     if (!selectedRegion) return [];
 
     if (selectedRegion === 'chest') {
+      // Pacientes SIN prótesis: solo 4 mamografías básicas
+      if (protesisType === 'sin-protesis') {
+        return [
+          // Mamografías Básicas
+          { title: 'MAMA CC D', id: 'M-01', img: MammographyImages['MAMA CC D'], hasProtesis: false },
+          { title: 'MAMA CC I', id: 'M-02', img: MammographyImages['MAMA CC I'], hasProtesis: false },
+          { title: 'MAMA MLO D', id: 'M-03', img: MammographyImages['MAMA MLO D'], hasProtesis: false },
+          { title: 'MAMA MLO I', id: 'M-04', img: MammographyImages['MAMA MLO I'], hasProtesis: false },
+          // Otras proyecciones de Tórax
+          { title: 'TORAX PA', id: 'TX-01', img: XRayImages.chest['TORAX PA'], hasProtesis: false },
+          { title: 'TORAX RF', id: 'TX-02', img: XRayImages.chest['TORAX RF'], hasProtesis: false },
+          { title: 'TORAX LRT', id: 'TX-03', img: XRayImages.chest['TORAX LRT'], hasProtesis: false },
+          { title: 'TORAX PA INU', id: 'TX-04', img: XRayImages.chest['TORAX PA INU'], hasProtesis: false },
+          { title: 'COSTILLAS', id: 'TX-05', img: XRayImages.chest['COSTILLAS'], hasProtesis: false },
+          { title: 'EXTERNON', id: 'TX-06', img: XRayImages.chest['EXTERNON'], hasProtesis: false },
+          { title: 'D - COLUMNA', id: 'TX-07', img: XRayImages.chest['D - COLUMNA'], hasProtesis: false },
+        ];
+      }
+      
+      // Pacientes CON prótesis: 8 mamografías (4 con prótesis + 4 con técnica Eklund)
       return [
-        { title: 'MAMA CC D', id: 'M-01', img: MammographyImages['MAMA CC D'] },
-        { title: 'MAMA CC I', id: 'M-02', img: MammographyImages['MAMA CC I'] },
-        { title: 'MAMA MLO D', id: 'M-03', img: MammographyImages['MAMA MLO D'] },
-        { title: 'MAMA MLO I', id: 'M-04', img: MammographyImages['MAMA MLO I'] },
-        { title: 'MAMA FOC CCD', id: 'M-05', img: MammographyImages['MAMA CC D'] },
-        { title: 'TORAX PA', id: 'TX-01', img: XRayImages.chest['TORAX PA'] },
-        { title: 'TORAX RF', id: 'TX-02', img: XRayImages.chest['TORAX RF'] },
-        { title: 'TORAX LRT', id: 'TX-03', img: XRayImages.chest['TORAX LRT'] },
-        { title: 'TORAX PA INU', id: 'TX-04', img: XRayImages.chest['TORAX PA INU'] },
-        { title: 'COSTILLAS', id: 'TX-05', img: XRayImages.chest['COSTILLAS'] },
-        { title: 'EXTERNON', id: 'TX-06', img: XRayImages.chest['EXTERNON'] },
-        { title: 'D - COLUMNA', id: 'TX-07', img: XRayImages.chest['D - COLUMNA'] },
+        // Mamografías con Prótesis (sin Eklund)
+        { title: 'MAMA CC D PROTESIS', id: 'M-05', img: MammographyImages['MAMA CC D PROTESIS'], hasProtesis: true, isEklund: false },
+        { title: 'MAMA CC I PROTESIS', id: 'M-06', img: MammographyImages['MAMA CC I PROTESIS'], hasProtesis: true, isEklund: false },
+        { title: 'MAMA MLO D PROTESIS', id: 'M-07', img: MammographyImages['MAMA MLO D PROTESIS'], hasProtesis: true, isEklund: false },
+        { title: 'MAMA MLO I PROTESIS', id: 'M-08', img: MammographyImages['MAMA MLO I PROTESIS'], hasProtesis: true, isEklund: false },
+        // Mamografías con Prótesis - Técnica Eklund
+        { title: 'MAMA CC D PROTESIS EKLUND', id: 'M-09', img: MammographyImages['MAMA CC D PROTESIS EKLUND'], hasProtesis: true, isEklund: true },
+        { title: 'MAMA CC I PROTESIS EKLUND', id: 'M-10', img: MammographyImages['MAMA CC I PROTESIS EKLUND'], hasProtesis: true, isEklund: true },
+        { title: 'MAMA MLO D PROTESIS EKLUND', id: 'M-11', img: MammographyImages['MAMA MLO D PROTESIS EKLUND'], hasProtesis: true, isEklund: true },
+        { title: 'MAMA MLO I PROTESIS EKLUND', id: 'M-12', img: MammographyImages['MAMA MLO I PROTESIS EKLUND'], hasProtesis: true, isEklund: true },
+        // Otras proyecciones de Tórax
+        { title: 'TORAX PA', id: 'TX-01', img: XRayImages.chest['TORAX PA'], hasProtesis: false },
+        { title: 'TORAX RF', id: 'TX-02', img: XRayImages.chest['TORAX RF'], hasProtesis: false },
+        { title: 'TORAX LRT', id: 'TX-03', img: XRayImages.chest['TORAX LRT'], hasProtesis: false },
+        { title: 'TORAX PA INU', id: 'TX-04', img: XRayImages.chest['TORAX PA INU'], hasProtesis: false },
+        { title: 'COSTILLAS', id: 'TX-05', img: XRayImages.chest['COSTILLAS'], hasProtesis: false },
+        { title: 'EXTERNON', id: 'TX-06', img: XRayImages.chest['EXTERNON'], hasProtesis: false },
+        { title: 'D - COLUMNA', id: 'TX-07', img: XRayImages.chest['D - COLUMNA'], hasProtesis: false },
       ];
     }
 
@@ -318,7 +395,14 @@ const EducationalWorkspace = ({
   const projections = getProjections();
   const currentProjection = projections[selectedProjectionIndex] || projections[0];
 
-  const gridClass = viewMode === 1 ? 'grid-cols-1' : viewMode === 2 ? 'grid-cols-1 sm:grid-cols-2' : viewMode === 4 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
+  const gridClass = viewMode === 1 ? 'grid-cols-1' : viewMode === 2 ? 'grid-cols-1 sm:grid-cols-2' : viewMode === 4 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-2';
+
+  // Para modo 8 vistas: mostrar solo 4 a la vez según la página
+  const startIndex = viewMode === 8 ? slotPage * 4 : 0;
+  const displayCount = viewMode === 8 ? 4 : viewMode;
+  const displayProjections = selectedProjectionIndices.slice(startIndex, startIndex + displayCount);
+  // Mostrar paginación cuando hay 8 proyecciones seleccionadas (con prótesis) o cuando el modo es 8 vistas
+  const showPagination = protesisType === 'con-protesis' || viewMode === 8;
 
   return (
     <div className="h-full flex flex-col bg-bg-main dark:bg-slate-950 overflow-y-auto md:overflow-hidden transition-all duration-300">
@@ -344,10 +428,61 @@ const EducationalWorkspace = ({
                   <span className="text-[11px] font-bold text-white uppercase truncate leading-none mb-0.5">{patient?.name || 'N/A'}</span>
                 </div>
 
-                <div className="flex flex-col gap-1.5 mt-0.5">
+                {/* Selector Con/Sin Prótesis - Solo para región chest */}
+                {selectedRegion === 'chest' && (
+                  <div className="flex flex-col gap-1 mt-1">
+                    <span className="text-[7px] font-black text-slate-400 uppercase tracking-tighter">Tipo de Paciente</span>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => {
+                          setProtesisType('sin-protesis');
+                          setWorkspaceState((prev: any) => ({
+                            ...prev,
+                            protesisType: 'sin-protesis',
+                            selectedProjectionIndices: [0, 1, 2, 3],
+                            validatedIndices: [],
+                            zoomStates: {},
+                            panStates: {}
+                          }));
+                          setSlotPage(0);
+                        }}
+                        className={`flex-1 h-6 text-[8px] font-bold rounded border transition-all duration-300 ${
+                          protesisType === 'sin-protesis'
+                            ? 'border-emerald-500 bg-emerald-500/20 text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.3)]'
+                            : 'bg-slate-700/50 border-slate-600 text-slate-400 hover:border-slate-500'
+                        }`}
+                      >
+                        SIN PRÓTESIS
+                      </button>
+                      <button
+                        onClick={() => {
+                          setProtesisType('con-protesis');
+                          setWorkspaceState((prev: any) => ({
+                            ...prev,
+                            protesisType: 'con-protesis',
+                            selectedProjectionIndices: [0, 1, 2, 3, 4, 5, 6, 7],
+                            validatedIndices: [],
+                            zoomStates: {},
+                            panStates: {}
+                          }));
+                          setSlotPage(0);
+                        }}
+                        className={`flex-1 h-6 text-[8px] font-bold rounded border transition-all duration-300 ${
+                          protesisType === 'con-protesis'
+                            ? 'border-amber-500 bg-amber-500/20 text-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.3)]'
+                            : 'bg-slate-700/50 border-slate-600 text-slate-400 hover:border-slate-500'
+                        }`}
+                      >
+                        CON PRÓTESIS
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex flex-col gap-1.5 mt-1">
                   <div className="flex gap-1 justify-between px-0.5">
-                    {[1, 2, 4, 6].map((mode) => (
-                      <button 
+                    {[1, 2, 4, 8].map((mode) => (
+                      <button
                         key={mode}
                         onClick={() => setViewMode(mode)}
                         className={`flex-1 h-6 flex items-center justify-center rounded border transition-all duration-300 ${viewMode === mode ? 'border-primary bg-primary/5 text-white' : 'bg-transparent border-slate-800/50 text-slate-500 hover:text-slate-300'}`}
@@ -368,9 +503,9 @@ const EducationalWorkspace = ({
                             <div className="size-1 border border-current" />
                           </div>
                         )}
-                        {mode === 6 && (
-                          <div className="grid grid-cols-3 gap-0.5">
-                            {[...Array(6)].map((_, i) => <div key={i} className="size-0.5 border border-current" />)}
+                        {mode === 8 && (
+                          <div className="grid grid-cols-2 gap-0.5">
+                            {[...Array(8)].map((_, i) => <div key={i} className="size-0.5 border border-current" />)}
                           </div>
                         )}
                       </button>
@@ -401,12 +536,13 @@ const EducationalWorkspace = ({
 
         {/* Right Area: Grid Viewer (ALWAYS DARK) */}
         <div className="flex-1 bg-[#050505] overflow-hidden flex flex-col min-h-[100vh] md:min-h-0">
-          <div className={`flex-1 overflow-hidden grid ${gridClass} gap-px bg-white/5 p-px h-full`}>
-            {selectedProjectionIndices.slice(0, viewMode).map((projIdx, idx) => {
+          <div className={`flex-none overflow-hidden grid ${gridClass} gap-px bg-white/5 p-px ${showPagination ? 'h-[calc(100%-3rem)]' : 'h-full'}`}>
+            {displayProjections.map((projIdx, idx) => {
               const proj = projections[projIdx];
               if (!proj) return null;
-              
-              const isActive = activeSlot === idx;
+
+              const slotIndex = viewMode === 8 ? (slotPage * 4) + idx : idx;
+              const isActive = activeSlot === slotIndex;
               const isValidated = validatedIndices.includes(projIdx);
               const hasCaptured = Boolean(capturedImages[proj.id]);
 
@@ -498,7 +634,7 @@ const EducationalWorkspace = ({
                             region: selectedRegion === 'chest' ? 'Tórax' : selectedRegion === 'head' ? 'Cráneo' : 'Abdomen',
                             description: `Adquisición de ${proj.title} para el paciente ${patient?.name}.`,
                             img: getXRayImageUrl(selectedRegion, proj.title),
-                            params: proj.id.startsWith('M') ? { kvp: 28, mas: 80 } : { kvp: 110, mas: 5 }
+                            params: getSimulationParams(proj.id, proj.title)
                           });
                         }}
                         className="px-3 py-1 bg-[#1152d4] text-white text-[9px] font-black tracking-widest rounded-md hover:bg-[#1152d4]/90 transition-all duration-300 flex items-center gap-1 shadow-lg active:scale-95 border border-white/10"
@@ -511,6 +647,30 @@ const EducationalWorkspace = ({
               );
             })}
           </div>
+
+          {/* Controles de paginación para modo 8 vistas */}
+          {showPagination && (
+            <div className="h-12 bg-slate-900 border-t border-primary/30 flex items-center justify-center gap-3 shrink-0 shadow-lg z-20">
+              <button
+                onClick={() => setSlotPage(0)}
+                className={`px-3 py-1.5 rounded-md text-[9px] font-black uppercase tracking-widest transition-all border ${slotPage === 0 ? 'bg-white border-white text-primary shadow-[0_0_15px_rgba(255,255,255,0.3)]' : 'bg-slate-800 border-slate-600 text-slate-300 hover:border-white hover:text-white'}`}
+              >
+                ◀ 1-4
+              </button>
+              <span className="text-slate-600 text-xs">/</span>
+              <button
+                onClick={() => setSlotPage(1)}
+                disabled={selectedProjectionIndices.length <= 4}
+                className={`px-3 py-1.5 rounded-md text-[9px] font-black uppercase tracking-widest transition-all border ${slotPage === 1 ? 'bg-white border-white text-primary shadow-[0_0_15px_rgba(255,255,255,0.3)]' : 'bg-slate-800 border-slate-600 text-slate-300 hover:border-white hover:text-white'} ${selectedProjectionIndices.length <= 4 ? 'opacity-30 cursor-not-allowed' : ''}`}
+              >
+                5-8 ▶
+              </button>
+              <div className="flex items-center gap-2 ml-2 px-2.5 py-1 bg-slate-800 rounded-md border border-slate-700">
+                <span className="text-[8px] text-slate-400 uppercase font-bold">Pág</span>
+                <span className="text-[10px] text-white font-mono font-bold">{slotPage + 1}/2</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

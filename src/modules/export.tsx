@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { 
-  FileText, 
-  Download, 
-  CheckCircle, 
+import {
+  FileText,
+  Download,
+  CheckCircle,
   ArrowLeft,
   Calendar,
   User,
@@ -18,16 +18,28 @@ import { OtherImages } from "../assets";
 interface ExportScreenProps {
   patient: Patient | null;
   capturedImages: {[key: string]: string};
+  workspaceState?: { protesisType?: 'sin-protesis' | 'con-protesis' };
   onBack: () => void;
   onFinish: () => void;
 }
 
-const ExportScreen = ({ patient, capturedImages, onBack, onFinish }: ExportScreenProps) => {
+const ExportScreen = ({ patient, capturedImages, workspaceState, onBack, onFinish }: ExportScreenProps) => {
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
   const capturedList = Object.keys(capturedImages);
   const totalCaptured = capturedList.length;
+  const protesisType = workspaceState?.protesisType || 'sin-protesis';
+  
+  // Determinar imágenes finales según tipo de paciente
+  const finalImages = protesisType === 'con-protesis' 
+    ? [
+        { src: OtherImages.RADIO_FINAL_PROTESIS, title: 'MAMA COMPLETA PROTESIS', subtitle: '4 proyecciones con implante' },
+        { src: OtherImages.RADIO_FINAL_PROTESIS_EKLUND, title: 'MAMA COMPLETA PROTESIS EKLUND', subtitle: 'Técnica de desplazamiento de implante' }
+      ]
+    : [
+        { src: OtherImages.RADIO_FINAL_BASICO, title: 'MAMA COMPLETA BASICO', subtitle: '4 proyecciones estándar' }
+      ];
 
   const handleSave = () => {
     setIsSaving(true);
@@ -138,7 +150,7 @@ const ExportScreen = ({ patient, capturedImages, onBack, onFinish }: ExportScree
           <div className="lg:col-span-2 space-y-6">
             <section className="bg-slate-900 rounded-[2.5rem] p-4 md:p-8 border border-slate-800 shadow-2xl relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/50 via-primary to-primary/50 opacity-50" />
-              
+
               <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                 <div>
                   <h3 className="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
@@ -147,33 +159,55 @@ const ExportScreen = ({ patient, capturedImages, onBack, onFinish }: ExportScree
                   <p className="text-[10px] text-slate-500 mt-1 uppercase font-medium">Composición diagnóstica de la sesión</p>
                 </div>
                 <div className="bg-primary/10 border border-primary/30 px-4 py-1.5 rounded-full">
-                  <span className="text-[10px] font-bold text-primary uppercase brightness-125">Referencia Radiológica</span>
+                  <span className="text-[10px] font-bold text-primary uppercase brightness-125">
+                    {protesisType === 'con-protesis' ? 'Paciente con Prótesis' : 'Paciente Sin Prótesis'}
+                  </span>
                 </div>
               </div>
 
-              <div className="aspect-[4/3] bg-black rounded-2xl overflow-hidden border border-slate-800 relative shadow-inner">
-                {/* Simulated Grid Overlay */}
-                <div className="absolute inset-0 pointer-events-none grid grid-cols-4 grid-rows-3 opacity-10">
-                  {[...Array(12)].map((_, i) => <div key={i} className="border border-white/20" />)}
-                </div>
+              {/* Mostrar una o dos imágenes según el tipo de paciente */}
+              <div className={`grid gap-6 ${finalImages.length === 1 ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
+                {finalImages.map((img, idx) => (
+                  <div key={idx} className="aspect-[4/3] bg-black rounded-2xl overflow-hidden border border-slate-800 relative shadow-inner group/image">
+                    {/* Simulated Grid Overlay */}
+                    <div className="absolute inset-0 pointer-events-none grid grid-cols-4 grid-rows-3 opacity-10">
+                      {[...Array(12)].map((_, i) => <div key={i} className="border border-white/20" />)}
+                    </div>
 
-                <img 
-                  src={OtherImages.RADIO_FINAL} 
-                  className="w-full h-full object-contain grayscale opacity-90 transition-all duration-700 group-hover:opacity-100 group-hover:scale-[1.02]" 
-                  alt="Resultado final fusionado" 
-                />
+                    <img
+                      src={img.src}
+                      className="w-full h-full object-contain grayscale opacity-90 transition-all duration-700 group-hover/image:opacity-100 group-hover/image:scale-[1.02]"
+                      alt={img.title}
+                    />
 
-                {/* Patient Tag Overlay */}
-                <div className="absolute bottom-6 right-6 bg-black/60 backdrop-blur-md p-3 rounded-xl border border-white/10 text-white">
-                  <p className="text-[8px] font-mono opacity-50 uppercase mb-0.5">Patient Record</p>
-                  <p className="text-[10px] font-bold uppercase">{patient?.name}</p>
-                  <p className="text-[8px] font-mono opacity-50 mt-1">{new Date().toLocaleDateString()}</p>
-                </div>
+                    {/* Image Title Overlay */}
+                    <div className="absolute top-4 left-4 bg-primary/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-primary/50">
+                      <p className="text-[8px] font-bold text-white uppercase tracking-wider">{img.title}</p>
+                    </div>
+
+                    {/* Patient Tag Overlay */}
+                    <div className="absolute bottom-6 right-6 bg-black/60 backdrop-blur-md p-3 rounded-xl border border-white/10 text-white">
+                      <p className="text-[8px] font-mono opacity-50 uppercase mb-0.5">Patient Record</p>
+                      <p className="text-[10px] font-bold uppercase">{patient?.name}</p>
+                      <p className="text-[8px] font-mono opacity-50 mt-1">{new Date().toLocaleDateString()}</p>
+                    </div>
+
+                    {/* Eklund Badge */}
+                    {img.title.includes('EKLUND') && (
+                      <div className="absolute top-4 right-4 bg-amber-500/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-amber-400">
+                        <p className="text-[8px] font-black text-white uppercase tracking-wider">Técnica Eklund</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-              
+
               <div className="mt-6 p-4 bg-slate-800/50 rounded-2xl border border-slate-700/50">
                 <p className="text-[10px] text-slate-400 italic leading-relaxed">
-                  * Este es un ejemplo demostrativo de cómo las proyecciones capturadas se fusionan para el análisis del radiólogo. La calidad de la imagen final depende de los parámetros técnicos (kVp/mAs) seleccionados durante la simulación.
+                  * Este es un ejemplo demostrativo de cómo las proyecciones capturadas se fusionan para el análisis del radiólogo. 
+                  {protesisType === 'con-protesis' 
+                    ? ' En pacientes con implantes mamarios, se realiza una segunda composición con la técnica de Eklund para desplazar las prótesis y visualizar mejor el tejido glandular.'
+                    : ' La calidad de la imagen final depende de los parámetros técnicos (kVp/mAs) seleccionados durante la simulación.'}
                 </p>
               </div>
             </section>

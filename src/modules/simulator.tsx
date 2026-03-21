@@ -80,9 +80,21 @@ const XRaySimulator = ({ initialCase, onAccept, onCancel }: { initialCase?: any,
   });
 
   const cases = [
+    // Mamografías Básicas
     { id: 'M-01', title: 'MAMA CC D', region: 'Tórax', description: 'Paciente para tamizaje. Evaluar densidad glandular.', img: MammographyImages['MAMA CC D'], params: { kvp: 28, mas: 80 } },
-    { id: 'M-03', title: 'MAMA MLO D', region: 'Tórax', description: 'Evaluar prolongación axilar.', img: MammographyImages['MAMA MLO D'], params: { kvp: 30, mas: 100 } },
     { id: 'M-02', title: 'MAMA CC I', region: 'Tórax', description: 'Evaluación contralateral.', img: MammographyImages['MAMA CC I'], params: { kvp: 28, mas: 80 } },
+    { id: 'M-03', title: 'MAMA MLO D', region: 'Tórax', description: 'Evaluar prolongación axilar.', img: MammographyImages['MAMA MLO D'], params: { kvp: 30, mas: 100 } },
+    { id: 'M-04', title: 'MAMA MLO I', region: 'Tórax', description: 'Evaluación contralateral MLO.', img: MammographyImages['MAMA MLO I'], params: { kvp: 30, mas: 100 } },
+    // Mamografías con Prótesis
+    { id: 'M-05', title: 'MAMA CC D PROTESIS', region: 'Tórax', description: 'Paciente con implante mamario derecho.', img: MammographyImages['MAMA CC D PROTESIS'], params: { kvp: 30, mas: 90 } },
+    { id: 'M-06', title: 'MAMA CC I PROTESIS', region: 'Tórax', description: 'Paciente con implante mamario izquierdo.', img: MammographyImages['MAMA CC I PROTESIS'], params: { kvp: 30, mas: 90 } },
+    { id: 'M-07', title: 'MAMA MLO D PROTESIS', region: 'Tórax', description: 'Proyección MLO con implante derecho.', img: MammographyImages['MAMA MLO D PROTESIS'], params: { kvp: 32, mas: 110 } },
+    { id: 'M-08', title: 'MAMA MLO I PROTESIS', region: 'Tórax', description: 'Proyección MLO con implante izquierdo.', img: MammographyImages['MAMA MLO I PROTESIS'], params: { kvp: 32, mas: 110 } },
+    // Mamografías con Prótesis - Técnica Eklund
+    { id: 'M-09', title: 'MAMA CC D PROTESIS EKLUND', region: 'Tórax', description: 'Técnica de Eklund para desplazar implante derecho.', img: MammographyImages['MAMA CC D PROTESIS EKLUND'], params: { kvp: 30, mas: 90 } },
+    { id: 'M-10', title: 'MAMA CC I PROTESIS EKLUND', region: 'Tórax', description: 'Técnica de Eklund para desplazar implante izquierdo.', img: MammographyImages['MAMA CC I PROTESIS EKLUND'], params: { kvp: 30, mas: 90 } },
+    { id: 'M-11', title: 'MAMA MLO D PROTESIS EKLUND', region: 'Tórax', description: 'Proyección MLO con técnica de Eklund derecho.', img: MammographyImages['MAMA MLO D PROTESIS EKLUND'], params: { kvp: 32, mas: 110 } },
+    { id: 'M-12', title: 'MAMA MLO I PROTESIS EKLUND', region: 'Tórax', description: 'Proyección MLO con técnica de Eklund izquierdo.', img: MammographyImages['MAMA MLO I PROTESIS EKLUND'], params: { kvp: 32, mas: 110 } },
   ];
 
   const startSimulation = (c: any) => {
@@ -475,126 +487,126 @@ const XRaySimulator = ({ initialCase, onAccept, onCancel }: { initialCase?: any,
       </div>
 
       {/* Floating Configuration Panel */}
-      <div className={`absolute top-4 left-4 z-40 w-72 max-h-[calc(100%-2rem)] flex flex-col transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${isConfigOpen ? 'translate-x-0' : '-translate-x-[120%]'}`}>
-        <div className="bg-slate-900/95 backdrop-blur-xl p-5 rounded-3xl border border-slate-700/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] flex flex-col gap-4 overflow-y-auto hide-scrollbar">
-          <div className="flex items-center justify-between mb-1">
-            <h3 className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-2">
-              <Settings size={14} />
+      <div className={`absolute top-3 left-3 z-40 w-64 max-h-[calc(100%-1.5rem)] flex flex-col transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${isConfigOpen ? 'translate-x-0' : '-translate-x-[120%]'}`}>
+        <div className="bg-slate-900/95 backdrop-blur-xl p-3 rounded-2xl border border-slate-700/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] flex flex-col gap-3 overflow-y-auto hide-scrollbar">
+          <div className="flex items-center justify-between mb-0.5">
+            <h3 className="text-[9px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5">
+              <Settings size={12} />
               Configuración
             </h3>
-            <button onClick={() => setIsConfigOpen(false)} className="text-slate-400 hover:text-white transition-colors p-1 bg-slate-800 rounded-full">
-              <X size={14} />
+            <button onClick={() => setIsConfigOpen(false)} className="text-slate-400 hover:text-white transition-colors p-0.5 bg-slate-800 rounded-full">
+              <X size={12} />
             </button>
           </div>
 
           {simState === 'idle' && !initialCase ? (
-            <div className="space-y-3">
-              <h4 className="text-[9px] font-bold uppercase tracking-widest text-slate-500 mb-2">Casos Disponibles</h4>
-              <div className="space-y-2">
+            <div className="space-y-2">
+              <h4 className="text-[8px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">Casos Disponibles</h4>
+              <div className="space-y-1.5">
                 {cases.map(c => (
-                  <button 
-                    key={c.id} 
+                  <button
+                    key={c.id}
                     onClick={() => startSimulation(c)}
-                    className="w-full text-left p-3 rounded-xl border border-slate-700 hover:border-primary hover:bg-primary/10 transition-all group bg-slate-800/50"
+                    className="w-full text-left p-2 rounded-lg border border-slate-700 hover:border-primary hover:bg-primary/10 transition-all group bg-slate-800/50"
                   >
-                    <p className="text-[11px] font-bold text-slate-200 group-hover:text-primary transition-colors">{c.title}</p>
-                    <p className="text-[9px] text-slate-500 uppercase mt-1">{c.region}</p>
+                    <p className="text-[10px] font-bold text-slate-200 group-hover:text-primary transition-colors">{c.title}</p>
+                    <p className="text-[8px] text-slate-500 uppercase mt-0.5">{c.region}</p>
                   </button>
                 ))}
               </div>
             </div>
           ) : (
-            <div className="space-y-5">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-[10px] font-bold">
-                    <span className="text-slate-300">kVp (Penetración)</span>
-                    <span className="text-primary bg-primary/10 px-2 py-0.5 rounded font-mono">{kvp}</span>
+            <div className="space-y-3">
+              <div className="space-y-2.5">
+                <div className="space-y-1">
+                  <div className="flex justify-between text-[9px] font-bold">
+                    <span className="text-slate-300">kVp</span>
+                    <span className="text-primary bg-primary/10 px-1.5 py-0.5 rounded font-mono">{kvp}</span>
                   </div>
-                  <input 
-                    type="range" min="20" max="120" value={kvp} 
+                  <input
+                    type="range" min="20" max="120" value={kvp}
                     onChange={(e) => setKvp(parseInt(e.target.value))}
                     disabled={simState !== 'configuring'}
-                    className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary" 
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="flex justify-between text-[10px] font-bold">
-                    <span className="text-slate-300">mAs (Densidad)</span>
-                    <span className="text-primary bg-primary/10 px-2 py-0.5 rounded font-mono">{mas}</span>
-                  </div>
-                  <input 
-                    type="range" min="1" max="200" value={mas} 
-                    onChange={(e) => setMas(parseInt(e.target.value))}
-                    disabled={simState !== 'configuring'}
-                    className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary" 
+                    className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <div className="flex justify-between text-[10px] font-bold">
-                    <span className="text-slate-300">Ruido del Sensor</span>
-                    <span className="text-primary bg-primary/10 px-2 py-0.5 rounded font-mono">{sensorNoise}%</span>
+                <div className="space-y-1">
+                  <div className="flex justify-between text-[9px] font-bold">
+                    <span className="text-slate-300">mAs</span>
+                    <span className="text-primary bg-primary/10 px-1.5 py-0.5 rounded font-mono">{mas}</span>
                   </div>
-                  <input 
-                    type="range" min="0" max="100" value={sensorNoise} 
+                  <input
+                    type="range" min="1" max="200" value={mas}
+                    onChange={(e) => setMas(parseInt(e.target.value))}
+                    disabled={simState !== 'configuring'}
+                    className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between text-[9px] font-bold">
+                    <span className="text-slate-300">Ruido</span>
+                    <span className="text-primary bg-primary/10 px-1.5 py-0.5 rounded font-mono">{sensorNoise}%</span>
+                  </div>
+                  <input
+                    type="range" min="0" max="100" value={sensorNoise}
                     onChange={(e) => setSensorNoise(parseInt(e.target.value))}
                     disabled={simState !== 'configuring'}
-                    className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary" 
+                    className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary"
                   />
                 </div>
               </div>
 
               {/* Quality Indicators */}
-              <div className="space-y-3 pt-4 border-t border-slate-700/50">
-                <h4 className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Calidad Estimada</h4>
-                <div className="space-y-2.5">
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-[8px] font-bold uppercase text-slate-400">
+              <div className="space-y-2 pt-2 border-t border-slate-700/50">
+                <h4 className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Calidad</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-0.5">
+                    <div className="flex justify-between text-[7px] font-bold uppercase text-slate-400">
                       <span>Contraste</span>
                       <span className="font-mono">{Math.round(quality.contrast)}%</span>
                     </div>
-                    <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
                       <div className="h-full bg-cyan-400 transition-all duration-300" style={{ width: `${Math.min(100, quality.contrast / 2)}%` }} />
                     </div>
                   </div>
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-[8px] font-bold uppercase text-slate-400">
-                      <span>Brillo (Densidad)</span>
+                  <div className="space-y-0.5">
+                    <div className="flex justify-between text-[7px] font-bold uppercase text-slate-400">
+                      <span>Brillo</span>
                       <span className="font-mono">{Math.round(quality.brightness)}%</span>
                     </div>
-                    <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
                       <div className="h-full bg-emerald-400 transition-all duration-300" style={{ width: `${Math.min(100, quality.brightness / 2.5)}%` }} />
                     </div>
                   </div>
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-[8px] font-bold uppercase text-slate-400">
-                      <span>Ruido Cuántico</span>
+                  <div className="space-y-0.5">
+                    <div className="flex justify-between text-[7px] font-bold uppercase text-slate-400">
+                      <span>Ruido</span>
                       <span className="font-mono">{Math.round(quality.noise * 100)}%</span>
                     </div>
-                    <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
                       <div className="h-full bg-amber-400 transition-all duration-300" style={{ width: `${Math.min(100, quality.noise * 100)}%` }} />
                     </div>
                   </div>
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-[8px] font-bold uppercase text-slate-400">
-                      <span>Dispersión</span>
+                  <div className="space-y-0.5">
+                    <div className="flex justify-between text-[7px] font-bold uppercase text-slate-400">
+                      <span>Disp</span>
                       <span className="font-mono">{Math.round(quality.scatter * 100)}%</span>
                     </div>
-                    <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
                       <div className="h-full bg-red-400 transition-all duration-300" style={{ width: `${Math.min(100, quality.scatter * 100)}%` }} />
                     </div>
                   </div>
                 </div>
-                <div className={`text-[10px] font-bold text-center mt-3 py-1.5 rounded bg-slate-800/50 ${quality.color}`}>
+                <div className={`text-[9px] font-bold text-center py-1 rounded bg-slate-800/50 ${quality.color}`}>
                   {quality.status}
                 </div>
               </div>
 
-              <Button 
-                className="w-full py-3 text-xs shadow-lg" 
-                icon={Activity} 
+              <Button
+                className="w-full py-2 text-[10px] shadow-lg"
+                icon={Activity}
                 onClick={() => {
                   setIsConfigOpen(false);
                   handleCapture();
@@ -603,16 +615,6 @@ const XRaySimulator = ({ initialCase, onAccept, onCancel }: { initialCase?: any,
               >
                 Disparar Rayos X
               </Button>
-
-              {selectedCase && (
-                <div className="p-3 bg-slate-800/50 rounded-xl border border-slate-700/50">
-                  <p className="text-[8px] font-bold text-slate-500 uppercase mb-1">Caso Actual</p>
-                  <p className="text-[10px] font-bold text-slate-300 mb-1">{selectedCase.title}</p>
-                  <p className="text-[9px] leading-relaxed text-slate-400">
-                    {selectedCase.description}
-                  </p>
-                </div>
-              )}
             </div>
           )}
         </div>
