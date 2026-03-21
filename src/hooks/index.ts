@@ -1,0 +1,1 @@
+export { useDocumentacion } from './useDocumentacion';
