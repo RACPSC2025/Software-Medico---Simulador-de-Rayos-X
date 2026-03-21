@@ -59,7 +59,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Screen, Patient } from "../types";
 import { Button, Input } from "../components/ui";
 import { getXRayImageUrl } from "../utils/helpers";
-import { MammographyImages, XRayImages } from "../assets";
+import { MammographyImages, XRayImages, PositioningGuides } from "../assets";
 
 const BodyMap = ({ selectedRegion, onSelectRegion }: { selectedRegion: string, onSelectRegion: (r: string) => void }) => {
   return (
@@ -251,6 +251,8 @@ const EducationalWorkspace = ({
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
   const [slotPage, setSlotPage] = useState(0); // Para modo 8 vistas (0 = primeras 4, 1 = últimas 4)
   const [protesisType, setProtesisType] = useState<'sin-protesis' | 'con-protesis'>(workspaceProtesisType || 'sin-protesis');
+  const [positioningModalOpen, setPositioningModalOpen] = useState(false);
+  const [selectedProjectionForPositioning, setSelectedProjectionForPositioning] = useState<string>('');
 
   // Sincronizar estado local con workspaceState cuando cambie
   useEffect(() => {
@@ -397,12 +399,14 @@ const EducationalWorkspace = ({
 
   const gridClass = viewMode === 1 ? 'grid-cols-1' : viewMode === 2 ? 'grid-cols-1 sm:grid-cols-2' : viewMode === 4 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-2';
 
-  // Para modo 8 vistas: mostrar solo 4 a la vez según la página
-  const startIndex = viewMode === 8 ? slotPage * 4 : 0;
-  const displayCount = viewMode === 8 ? 4 : viewMode;
+  // Para modo 8 vistas o con prótesis: mostrar solo 4 a la vez según la página
+  const hasProtesis = protesisType === 'con-protesis';
+  const usePagination = viewMode === 8 || hasProtesis;
+  const startIndex = usePagination ? slotPage * 4 : 0;
+  const displayCount = usePagination ? 4 : viewMode;
   const displayProjections = selectedProjectionIndices.slice(startIndex, startIndex + displayCount);
   // Mostrar paginación cuando hay 8 proyecciones seleccionadas (con prótesis) o cuando el modo es 8 vistas
-  const showPagination = protesisType === 'con-protesis' || viewMode === 8;
+  const showPagination = hasProtesis || viewMode === 8;
 
   return (
     <div className="h-full flex flex-col bg-bg-main dark:bg-slate-950 overflow-y-auto md:overflow-hidden transition-all duration-300">
@@ -537,20 +541,22 @@ const EducationalWorkspace = ({
         {/* Right Area: Grid Viewer (ALWAYS DARK) */}
         <div className="flex-1 bg-[#050505] overflow-hidden flex flex-col min-h-[100vh] md:min-h-0">
           <div className={`flex-none overflow-hidden grid ${gridClass} gap-px bg-white/5 p-px ${showPagination ? 'h-[calc(100%-3rem)]' : 'h-full'}`}>
-            {displayProjections.map((projIdx, idx) => {
-              const proj = projections[projIdx];
+            {displayProjections.map((actualIndex, slotIdx) => {
+              const proj = projections[actualIndex];
               if (!proj) return null;
 
-              const slotIndex = viewMode === 8 ? (slotPage * 4) + idx : idx;
+              const slotIndex = usePagination ? (slotPage * 4) + slotIdx : slotIdx;
               const isActive = activeSlot === slotIndex;
-              const isValidated = validatedIndices.includes(projIdx);
+              const isValidated = validatedIndices.includes(actualIndex);
               const hasCaptured = Boolean(capturedImages[proj.id]);
+
+              console.log(`Grid slot ${slotIdx}: actualIndex=${actualIndex}, proj.id=${proj.id}, proj.title=${proj.title}`);
 
               return (
                 <div 
-                  key={idx} 
+                  key={actualIndex}
                   className={`relative bg-[#050505] group flex flex-col border-2 transition-all duration-300 min-h-0 min-w-0 ${isValidated ? 'border-emerald-500' : isActive ? 'border-primary/50' : 'border-white/5'}`}
-                  onClick={() => setActiveSlot(idx)}
+                  onClick={() => setActiveSlot(slotIndex)}
                 >
                   <div className="flex-1 relative overflow-hidden min-h-0">
                     {hasCaptured ? (
@@ -611,15 +617,27 @@ const EducationalWorkspace = ({
                       <div className={`size-2.5 rounded-full ${hasCaptured ? 'bg-emerald-500 shadow-[0_0_8px_#10b981]' : 'bg-slate-600 animate-pulse'}`} />
                       <span className="text-[10px] text-white/80 font-bold uppercase truncate max-w-[100px] tracking-tight">{proj.title}</span>
                     </div>
-                    <div className="flex gap-2">
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); toggleValidation(projIdx); }}
+                    <div className="flex gap-1.5">
+                      {/* Botón PROYECCIÓN - Guía de posicionamiento */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedProjectionForPositioning(proj.title);
+                          setPositioningModalOpen(true);
+                        }}
+                        className="px-2 py-1 bg-emerald-600 text-white text-[9px] font-black tracking-widest rounded-md hover:bg-emerald-600/90 transition-all duration-300 flex items-center gap-1 shadow-lg active:scale-95 border border-white/10"
+                        title="Guía de Posicionamiento"
+                      >
+                        <User size={12} /> POS
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); toggleValidation(actualIndex); }}
                         disabled={!hasCaptured}
                         className={`px-3 py-1 rounded-md text-[9px] font-black tracking-widest transition-all duration-300 border ${
-                          !hasCaptured 
+                          !hasCaptured
                             ? 'border-white/5 text-white/20 cursor-not-allowed'
-                            : isValidated 
-                              ? 'bg-emerald-500 border-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.4)]' 
+                            : isValidated
+                              ? 'bg-emerald-500 border-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.4)]'
                               : 'border-white/20 text-white hover:border-primary/60 hover:bg-primary/5 hover:text-primary'
                         }`}
                       >
@@ -689,6 +707,76 @@ const EducationalWorkspace = ({
               <X size={24} />
             </button>
             <img src={fullscreenImage} className="max-w-full max-h-full object-contain grayscale" alt="" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal de Guías de Posicionamiento */}
+      <AnimatePresence>
+        {positioningModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-2 backdrop-blur-sm"
+            onClick={() => setPositioningModalOpen(false)}
+          >
+            <div className="relative max-w-6xl max-h-[95vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              {/* Header Compacto */}
+              <div className="sticky top-0 bg-slate-900 p-2 flex items-center justify-between border-b border-white/10">
+                <div className="flex items-center gap-3">
+                  <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                    {selectedProjectionForPositioning}
+                  </h3>
+                  <span className="text-[9px] text-emerald-400 font-bold uppercase bg-emerald-500/10 px-2 py-0.5 rounded">
+                    Guía de Posicionamiento
+                  </span>
+                </div>
+                <button
+                  onClick={() => setPositioningModalOpen(false)}
+                  className="p-1 hover:bg-white/10 rounded transition-colors"
+                >
+                  <X size={18} className="text-white" />
+                </button>
+              </div>
+
+              {/* Imágenes de posicionamiento - Máximo espacio para imágenes */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-2">
+                {PositioningGuides[selectedProjectionForPositioning]?.map((img, idx) => (
+                  <div key={idx} className="bg-slate-900/50 rounded-lg overflow-hidden border border-white/5">
+                    <div className="aspect-[4/3] bg-black">
+                      <img
+                        src={img}
+                        className="w-full h-full object-contain"
+                        alt={`Guía de posicionamiento ${idx + 1}`}
+                      />
+                    </div>
+                    <div className="px-2 py-1 bg-slate-800/80 border-t border-white/5">
+                      <p className="text-[9px] text-slate-300 text-center font-bold uppercase tracking-wide">
+                        {idx === 0 ? 'Posición del Paciente' : idx === 1 ? 'Técnica Complementaria' : `Vista ${idx + 1}`}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                
+                {/* Si no hay guía específica */}
+                {(!PositioningGuides[selectedProjectionForPositioning] || PositioningGuides[selectedProjectionForPositioning].length === 0) && (
+                  <div className="col-span-full text-center py-8">
+                    <div className="size-12 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <Activity size={24} className="text-slate-500" />
+                    </div>
+                    <p className="text-slate-400 text-xs font-bold uppercase">Guía no disponible</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Footer Compacto - Texto claro sobre fondo oscuro */}
+              <div className="sticky bottom-0 bg-slate-900/95 p-2 border-t border-white/10">
+                <p className="text-[9px] text-slate-200 text-center font-medium uppercase tracking-wide">
+                  Referencia de posicionamiento del paciente antes de la adquisición
+                </p>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

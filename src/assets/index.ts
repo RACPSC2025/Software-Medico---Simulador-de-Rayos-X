@@ -16,6 +16,20 @@ import mama_cc_i_protesis_eklund from './MAMA CC I PROTESIS EKLUND.png';
 import mama_mlo_d_protesis_eklund from './MAMA MLO D PROTESIS EKLUND.png';
 import mama_mlo_i_protesis_eklund from './MAMA MLO I PROTESIS EKLUND.png';
 
+// Proyecciones - Guías de Posicionamiento
+import mama_cc_1 from './Proyecciones/MAMA CC 1.png';
+import mama_cc_2 from './Proyecciones/MAMA CC 2.png';
+import mama_cv_pos from './Proyecciones/MAMA CV.png';
+import mama_eklund_tecnica from './Proyecciones/MAMA EKLUND TECNICA.webp';
+import mama_lm from './Proyecciones/MAMA LM.png';
+import mama_ml_1 from './Proyecciones/MAMA ML 1.png';
+import mama_mlo_1 from './Proyecciones/MAMA MLO 1.png';
+import mama_mx_mag_axilar from './Proyecciones/MAMA MX MAG Axilar Proyeccion.png';
+import mamografo from './Proyecciones/Mamografo.jpg';
+import maquina_mamografia from './Proyecciones/Maquina de Mamografia.webp';
+import partes_mamografo from './Proyecciones/partes-mamografo.webp';
+import proyeccion_magnificacion from './Proyecciones/Proyeccion de Magnificacion - Posicionamiento.jpg';
+
 // Mamografías Especiales
 import mama_cc_mag from './CC MAG Proyeccion de Magnificacion - Radiografia.jpg';
 import mama_cv from './MAMA CV.jpeg';
@@ -58,6 +72,30 @@ export const OtherImages = {
   RADIO_FINAL_PROTESIS: mama_completa_protesis,
   RADIO_FINAL_PROTESIS_EKLUND: mama_completa_protesis_eklund,
   AXILAR: axilar_derecha_izquierda,
+};
+
+// Guías de Posicionamiento por tipo de proyección
+export const PositioningGuides: { [key: string]: string[] } = {
+  // MAMA CC (tanto D como I, con/sin prótesis) - usan las mismas guías
+  'MAMA CC D': [mama_cc_1, mama_cc_2],
+  'MAMA CC I': [mama_cc_1, mama_cc_2],
+  'MAMA CC D PROTESIS': [mama_cc_1, mama_cc_2],
+  'MAMA CC I PROTESIS': [mama_cc_1, mama_cc_2],
+  'MAMA CC D PROTESIS EKLUND': [mama_cc_1, mama_cc_2],
+  'MAMA CC I PROTESIS EKLUND': [mama_cc_1, mama_cc_2],
+  // MAMA MLO
+  'MAMA MLO D': [mama_mlo_1],
+  'MAMA MLO I': [mama_mlo_1],
+  'MAMA MLO D PROTESIS': [mama_mlo_1],
+  'MAMA MLO I PROTESIS': [mama_mlo_1],
+  'MAMA MLO D PROTESIS EKLUND': [mama_mlo_1, mama_eklund_tecnica],
+  'MAMA MLO I PROTESIS EKLUND': [mama_mlo_1, mama_eklund_tecnica],
+  // MAMA CV
+  'MAMA CV': [mama_cv_pos],
+  // MAMA CC MAG
+  'MAMA CC MAG': [proyeccion_magnificacion],
+  // Axilar
+  'MAMA MX MAG AXILAR': [mama_mx_mag_axilar],
 };
 
 // Imágenes de Rayos X por región (placeholders - agregar archivos a la carpeta assets)
