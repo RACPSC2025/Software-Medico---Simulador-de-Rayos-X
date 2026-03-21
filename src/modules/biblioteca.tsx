@@ -9,9 +9,15 @@ import {
   CheckCircle2,
   AlertTriangle,
   ArrowLeft,
-  BookOpen
+  BookOpen,
+  Pencil,
+  Download,
+  Upload,
+  RotateCcw,
+  AlertCircle
 } from 'lucide-react';
 import { useDocumentacion } from '../hooks/useDocumentacion';
+import { EditorDocumento } from './editor-documentacion';
 
 interface DocumentoCardProps {
   documento: {
@@ -98,9 +104,10 @@ interface DocumentoDetalleProps {
     };
   };
   onBack: () => void;
+  onEdit?: () => void;
 }
 
-const DocumentoDetalle: React.FC<DocumentoDetalleProps> = ({ documento, onBack }) => {
+const DocumentoDetalle: React.FC<DocumentoDetalleProps> = ({ documento, onBack, onEdit }) => {
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -110,13 +117,25 @@ const DocumentoDetalle: React.FC<DocumentoDetalleProps> = ({ documento, onBack }
     >
       {/* Header */}
       <div className="mb-6">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-4"
-        >
-          <ArrowLeft size={18} />
-          <span className="text-sm font-medium">Volver a la lista</span>
-        </button>
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={onBack}
+            className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+          >
+            <ArrowLeft size={18} />
+            <span className="text-sm font-medium">Volver a la lista</span>
+          </button>
+          
+          {onEdit && (
+            <button
+              onClick={onEdit}
+              className="flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-all shadow-lg shadow-amber-600/20"
+            >
+              <Pencil size={16} />
+              Editar
+            </button>
+          )}
+        </div>
 
         <div className="flex items-start justify-between">
           <div>
@@ -257,11 +276,13 @@ const DocumentoDetalle: React.FC<DocumentoDetalleProps> = ({ documento, onBack }
 };
 
 export const Biblioteca: React.FC = () => {
-  const { documentacion, loading, obtenerDocumento } = useDocumentacion();
-  const [vista, setVista] = useState<'lista' | 'detalle'>('lista');
+  const { documentacion, loading, obtenerDocumento, guardarOverride, exportarDocumentacion, importarDocumentacion, resetOverrides, hasOverrides } = useDocumentacion();
+  const [vista, setVista] = useState<'lista' | 'detalle' | 'editar'>('lista');
   const [docSeleccionado, setDocSeleccionado] = useState<string | null>(null);
   const [busqueda, setBusqueda] = useState('');
   const [categoriaFiltro, setCategoriaFiltro] = useState<string>('todas');
+  const [mostrarConfirmacionReset, setMostrarConfirmacionReset] = useState(false);
+  const [mensajeImportacion, setMensajeImportacion] = useState<{ tipo: 'success' | 'error', texto: string } | null>(null);
 
   // Filtrar documentos por búsqueda y categoría
   const documentosFiltrados = useMemo(() => {
@@ -290,6 +311,51 @@ export const Biblioteca: React.FC = () => {
     setVista('detalle');
   };
 
+  const handleEditar = () => {
+    setVista('editar');
+  };
+
+  const handleGuardarEdicion = (contenidoEditado: any) => {
+    if (docSeleccionado) {
+      guardarOverride(docSeleccionado, contenidoEditado);
+    }
+  };
+
+  const handleExportar = () => {
+    exportarDocumentacion();
+  };
+
+  const handleImportarClick = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const resultado = await importarDocumentacion(file);
+        if (resultado.success) {
+          setMensajeImportacion({
+            tipo: 'success',
+            texto: 'Documentación importada exitosamente'
+          });
+        } else {
+          setMensajeImportacion({
+            tipo: 'error',
+            texto: resultado.error || 'Error al importar'
+          });
+        }
+        setTimeout(() => setMensajeImportacion(null), 5000);
+      }
+    };
+    input.click();
+  };
+
+  const handleReset = () => {
+    if (window.confirm('¿Estás seguro de descartar todas las ediciones locales y volver a la documentación original? Esta acción no se puede deshacer.')) {
+      resetOverrides();
+    }
+  };
+
   const handleVolver = () => {
     setVista('lista');
     setDocSeleccionado(null);
@@ -313,19 +379,81 @@ export const Biblioteca: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="size-12 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/30">
-              <BookOpen size={24} className="text-primary" />
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="size-12 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/30">
+                <BookOpen size={24} className="text-primary" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white uppercase tracking-wide">
+                  Biblioteca de Documentación
+                </h1>
+                <p className="text-sm text-slate-400">
+                  Material educativo para formación de profesionales en mamografía
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-white uppercase tracking-wide">
-                Biblioteca de Documentación
-              </h1>
-              <p className="text-sm text-slate-400">
-                Material educativo para formación de profesionales en mamografía
-              </p>
+
+            {/* Acciones */}
+            <div className="flex items-center gap-2">
+              {/* Botón Exportar */}
+              <button
+                onClick={handleExportar}
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-all shadow-lg shadow-emerald-600/20"
+                title="Descargar documentación actual como archivo JSON"
+              >
+                <Download size={16} />
+                Exportar
+              </button>
+
+              {/* Botón Importar */}
+              <button
+                onClick={handleImportarClick}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-all shadow-lg shadow-blue-600/20"
+                title="Cargar documentación desde archivo JSON"
+              >
+                <Upload size={16} />
+                Importar
+              </button>
+
+              {/* Botón Reset (solo si hay overrides) */}
+              {hasOverrides && (
+                <button
+                  onClick={handleReset}
+                  className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-all shadow-lg shadow-red-600/20"
+                  title="Descartar ediciones locales y volver al original"
+                >
+                  <RotateCcw size={16} />
+                  Resetear
+                </button>
+              )}
             </div>
           </div>
+
+          {/* Mensaje de importación */}
+          {mensajeImportacion && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className={`mb-4 p-3 rounded-lg flex items-center gap-3 ${
+                mensajeImportacion.tipo === 'success'
+                  ? 'bg-emerald-500/20 border border-emerald-500/30'
+                  : 'bg-red-500/20 border border-red-500/30'
+              }`}
+            >
+              {mensajeImportacion.tipo === 'success' ? (
+                <CheckCircle2 size={20} className="text-emerald-400" />
+              ) : (
+                <AlertCircle size={20} className="text-red-400" />
+              )}
+              <p className={`text-sm font-bold ${
+                mensajeImportacion.tipo === 'success' ? 'text-emerald-400' : 'text-red-400'
+              }`}>
+                {mensajeImportacion.texto}
+              </p>
+            </motion.div>
+          )}
 
           {/* Buscador y Filtros */}
           <div className="flex flex-col md:flex-row gap-4 mt-6">
@@ -406,6 +534,21 @@ export const Biblioteca: React.FC = () => {
                 </div>
               )}
             </motion.div>
+          ) : vista === 'editar' ? (
+            <motion.div
+              key="editar"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              {docSeleccionado && obtenerDocumento(docSeleccionado) && (
+                <EditorDocumento
+                  documento={obtenerDocumento(docSeleccionado)!}
+                  onSave={handleGuardarEdicion}
+                  onCancel={handleVolver}
+                />
+              )}
+            </motion.div>
           ) : (
             <motion.div
               key="detalle"
@@ -417,6 +560,7 @@ export const Biblioteca: React.FC = () => {
                 <DocumentoDetalle
                   documento={obtenerDocumento(docSeleccionado)!}
                   onBack={handleVolver}
+                  onEdit={handleEditar}
                 />
               )}
             </motion.div>
