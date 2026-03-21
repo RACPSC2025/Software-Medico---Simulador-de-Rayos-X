@@ -59,7 +59,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Screen, Patient } from "../types";
 import { Button, Input } from "../components/ui";
 import { getXRayImageUrl } from "../utils/helpers";
-import { MammographyImages, XRayImages, PositioningGuides, ProjectionDocs } from "../assets";
+import { MammographyImages, XRayImages, PositioningGuides } from "../assets";
+import { getProjectionDoc } from '../utils/projectionDocs';
 
 const BodyMap = ({ selectedRegion, onSelectRegion }: { selectedRegion: string, onSelectRegion: (r: string) => void }) => {
   return (
@@ -254,7 +255,7 @@ const EducationalWorkspace = ({
   const [positioningModalOpen, setPositioningModalOpen] = useState(false);
   const [selectedProjectionForPositioning, setSelectedProjectionForPositioning] = useState<string>('');
   const [docModalOpen, setDocModalOpen] = useState(false);
-  const [selectedProjectionForDoc, setSelectedProjectionForDoc] = useState<string>('');
+  const [selectedDocData, setSelectedDocData] = useState<any>(null);
 
   // Sincronizar estado local con workspaceState cuando cambie
   useEffect(() => {
@@ -636,7 +637,9 @@ const EducationalWorkspace = ({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedProjectionForDoc(proj.title);
+                          // Obtener documentación desde global (ya cargada en main.tsx)
+                          const docData = getProjectionDoc(proj.title);
+                          setSelectedDocData(docData || null);
                           setDocModalOpen(true);
                         }}
                         className="px-2 py-1 bg-amber-600 text-white text-[9px] font-black tracking-widest rounded-md hover:bg-amber-600/90 transition-all duration-300 flex items-center gap-1 shadow-lg active:scale-95 border border-white/10"
@@ -814,10 +817,10 @@ const EducationalWorkspace = ({
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-white uppercase tracking-wider">
-                      {selectedProjectionForDoc}
+                      {selectedDocData?.titulo || 'Documentación'}
                     </h3>
                     <p className="text-[10px] text-amber-400 font-bold uppercase mt-0.5">
-                      Documentación Educativa
+                      {selectedDocData?.tituloCompleto || ''}
                     </p>
                   </div>
                 </div>
@@ -831,7 +834,7 @@ const EducationalWorkspace = ({
 
               {/* Contenido - Layout de 2 columnas para mejor lectura */}
               <div className="p-6">
-                {ProjectionDocs[selectedProjectionForDoc] ? (
+                {selectedDocData?.contenido ? (
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Columna Izquierda */}
                     <div className="space-y-6">
@@ -844,7 +847,7 @@ const EducationalWorkspace = ({
                           Pasos Clave del Posicionamiento
                         </h4>
                         <ol className="space-y-3">
-                          {ProjectionDocs[selectedProjectionForDoc].pasosClave.map((paso, idx) => (
+                          {selectedDocData.contenido.pasosClave.map((paso: string, idx: number) => (
                             <li key={idx} className="text-sm text-slate-200 flex gap-3 leading-relaxed">
                               <span className="shrink-0 w-6 h-6 bg-amber-500/30 rounded-full flex items-center justify-center text-[11px] font-bold text-amber-400">
                                 {idx + 1}
@@ -864,7 +867,7 @@ const EducationalWorkspace = ({
                           Anatomía Visualizada
                         </h4>
                         <ul className="space-y-2">
-                          {ProjectionDocs[selectedProjectionForDoc].anatomiaVisualizada.map((item, idx) => (
+                          {selectedDocData.contenido.anatomiaVisualizada.map((item: string, idx: number) => (
                             <li key={idx} className="text-sm text-slate-200 flex gap-3 leading-relaxed">
                               <span className="shrink-0 w-2 h-2 bg-amber-500 rounded-full mt-1.5" />
                               <span>{item}</span>
@@ -885,7 +888,7 @@ const EducationalWorkspace = ({
                           Utilidad Clínica
                         </h4>
                         <ul className="space-y-2">
-                          {ProjectionDocs[selectedProjectionForDoc].utilidadClinica.map((item, idx) => (
+                          {selectedDocData.contenido.utilidadClinica.map((item: string, idx: number) => (
                             <li key={idx} className="text-sm text-slate-200 flex gap-3 leading-relaxed">
                               <span className="shrink-0 w-2 h-2 bg-amber-500 rounded-full mt-1.5" />
                               <span>{item}</span>
@@ -903,7 +906,7 @@ const EducationalWorkspace = ({
                           Criterios de Calidad
                         </h4>
                         <ul className="space-y-2">
-                          {ProjectionDocs[selectedProjectionForDoc].criteriosCalidad.map((item, idx) => (
+                          {selectedDocData.contenido.criteriosCalidad.map((item: string, idx: number) => (
                             <li key={idx} className="text-sm text-slate-200 flex gap-3 leading-relaxed">
                               <span className="shrink-0 text-emerald-500 mt-0.5">✅</span>
                               <span>{item}</span>
@@ -921,7 +924,7 @@ const EducationalWorkspace = ({
                           Errores Comunes
                         </h4>
                         <ul className="space-y-2">
-                          {ProjectionDocs[selectedProjectionForDoc].erroresComunes.map((item, idx) => (
+                          {selectedDocData.contenido.erroresComunes.map((item: string, idx: number) => (
                             <li key={idx} className="text-sm text-slate-200 flex gap-3 leading-relaxed">
                               <span className="shrink-0 text-red-500 mt-0.5">❌</span>
                               <span>{item}</span>
