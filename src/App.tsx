@@ -6,8 +6,9 @@ import { DashboardLayout } from "./modules/layout";
 import { PatientRegistration } from "./modules/registration";
 import { EducationalWorkspace } from "./modules/studies";
 import { XRaySimulator } from "./modules/simulator";
-import { ExportScreen } from './modules/export'; 
+import { ExportScreen } from './modules/export';
 import { ProfessionalDirectory } from "./modules/directory";
+import { Biblioteca } from './modules/biblioteca';
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('login');
@@ -121,6 +122,18 @@ export default function App() {
               onBack={() => handleNavigate('educational-workspace')}
               onFinish={() => handleNavigate('patient-registration')}
             />
+          </DashboardLayout>
+        );
+      case 'biblioteca':
+        return (
+          <DashboardLayout
+            userEmail={userEmail}
+            activeScreen={screen}
+            onNavigate={handleNavigate}
+            isDarkMode={isDarkMode}
+            onToggleTheme={() => setIsDarkMode(!isDarkMode)}
+          >
+            <Biblioteca />
           </DashboardLayout>
         );
       default:

@@ -1,13 +1,14 @@
 export // Types
-export type Screen = 
-  | 'login' 
-  | 'register' 
-  | 'recovery' 
-  | 'patient-registration' 
-  | 'professional-directory' 
-  | 'export-share' 
-  | 'educational-workspace' 
-  | 'xray-simulator';
+export type Screen =
+  | 'login'
+  | 'register'
+  | 'recovery'
+  | 'patient-registration'
+  | 'professional-directory'
+  | 'export-share'
+  | 'educational-workspace'
+  | 'xray-simulator'
+  | 'biblioteca';
 
 export interface Patient {
   id: string;
