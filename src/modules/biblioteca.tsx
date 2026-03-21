@@ -19,6 +19,11 @@ import {
 import { useDocumentacion } from '../hooks/useDocumentacion';
 import { EditorDocumento } from './editor-documentacion';
 
+// Helper para obtener docs desde window (inyectados en main.tsx)
+const getDocsFromWindow = () => {
+  return (window as any).PROJECTION_DOCS || {};
+};
+
 interface DocumentoCardProps {
   documento: {
     id: string;
@@ -276,7 +281,7 @@ const DocumentoDetalle: React.FC<DocumentoDetalleProps> = ({ documento, onBack, 
 };
 
 export const Biblioteca: React.FC = () => {
-  const { documentacion, loading, obtenerDocumento, guardarOverride, exportarDocumentacion, importarDocumentacion, resetOverrides, hasOverrides } = useDocumentacion();
+  const { guardarOverride, exportarDocumentacion, importarDocumentacion, resetOverrides, hasOverrides } = useDocumentacion();
   const [vista, setVista] = useState<'lista' | 'detalle' | 'editar'>('lista');
   const [docSeleccionado, setDocSeleccionado] = useState<string | null>(null);
   const [busqueda, setBusqueda] = useState('');
@@ -284,27 +289,28 @@ export const Biblioteca: React.FC = () => {
   const [mostrarConfirmacionReset, setMostrarConfirmacionReset] = useState(false);
   const [mensajeImportacion, setMensajeImportacion] = useState<{ tipo: 'success' | 'error', texto: string } | null>(null);
 
+  // Obtener documentos desde window (inyectados en main.tsx)
+  const docsFromWindow = getDocsFromWindow();
+  const documentosArray = Object.values(docsFromWindow);
+
   // Filtrar documentos por búsqueda y categoría
   const documentosFiltrados = useMemo(() => {
-    if (!documentacion) return [];
-
-    return Object.values(documentacion.documentos).filter((doc) => {
-      const coincideBusqueda = 
+    return documentosArray.filter((doc: any) => {
+      const coincideBusqueda =
         doc.titulo.toLowerCase().includes(busqueda.toLowerCase()) ||
         doc.tituloCompleto.toLowerCase().includes(busqueda.toLowerCase());
-      
-      const coincideCategoria = 
+
+      const coincideCategoria =
         categoriaFiltro === 'todas' || doc.categoria === categoriaFiltro;
 
       return coincideBusqueda && coincideCategoria;
     });
-  }, [documentacion, busqueda, categoriaFiltro]);
+  }, [documentosArray, busqueda, categoriaFiltro]);
 
   // Obtener categorías únicas
   const categorias = useMemo(() => {
-    if (!documentacion) return [];
-    return Array.from(new Set(Object.values(documentacion.documentos).map(d => d.categoria)));
-  }, [documentacion]);
+    return Array.from(new Set(documentosArray.map((d: any) => d.categoria)));
+  }, [documentosArray]);
 
   const handleVerDetalle = (docId: string) => {
     setDocSeleccionado(docId);
@@ -360,19 +366,6 @@ export const Biblioteca: React.FC = () => {
     setVista('lista');
     setDocSeleccionado(null);
   };
-
-  if (loading) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-center">
-          <div className="size-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-slate-400 text-sm font-medium uppercase tracking-wider">
-            Cargando documentación...
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="h-full overflow-y-auto bg-slate-950 p-6">
@@ -497,7 +490,7 @@ export const Biblioteca: React.FC = () => {
 
           {/* Contador de resultados */}
           <div className="mt-4 text-[10px] text-slate-500 uppercase tracking-wider">
-            {documentosFiltrados.length} de {Object.values(documentacion?.documentos || {}).length} documentos
+            {documentosFiltrados.length} de {documentosArray.length} documentos
           </div>
         </div>
 
@@ -541,9 +534,9 @@ export const Biblioteca: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              {docSeleccionado && obtenerDocumento(docSeleccionado) && (
+              {docSeleccionado && docsFromWindow[docSeleccionado] && (
                 <EditorDocumento
-                  documento={obtenerDocumento(docSeleccionado)!}
+                  documento={docsFromWindow[docSeleccionado]}
                   onSave={handleGuardarEdicion}
                   onCancel={handleVolver}
                 />
@@ -556,9 +549,9 @@ export const Biblioteca: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              {docSeleccionado && obtenerDocumento(docSeleccionado) && (
+              {docSeleccionado && docsFromWindow[docSeleccionado] && (
                 <DocumentoDetalle
-                  documento={obtenerDocumento(docSeleccionado)!}
+                  documento={docsFromWindow[docSeleccionado]}
                   onBack={handleVolver}
                   onEdit={handleEditar}
                 />
