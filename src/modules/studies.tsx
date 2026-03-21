@@ -59,7 +59,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Screen, Patient } from "../types";
 import { Button, Input } from "../components/ui";
 import { getXRayImageUrl } from "../utils/helpers";
-import { MammographyImages, XRayImages, PositioningGuides } from "../assets";
+import { MammographyImages, XRayImages, PositioningGuides, ProjectionDocs } from "../assets";
 
 const BodyMap = ({ selectedRegion, onSelectRegion }: { selectedRegion: string, onSelectRegion: (r: string) => void }) => {
   return (
@@ -249,10 +249,12 @@ const EducationalWorkspace = ({
 
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
-  const [slotPage, setSlotPage] = useState(0); // Para modo 8 vistas (0 = primeras 4, 1 = últimas 4)
+  const [slotPage, setSlotPage] = useState(0);
   const [protesisType, setProtesisType] = useState<'sin-protesis' | 'con-protesis'>(workspaceProtesisType || 'sin-protesis');
   const [positioningModalOpen, setPositioningModalOpen] = useState(false);
   const [selectedProjectionForPositioning, setSelectedProjectionForPositioning] = useState<string>('');
+  const [docModalOpen, setDocModalOpen] = useState(false);
+  const [selectedProjectionForDoc, setSelectedProjectionForDoc] = useState<string>('');
 
   // Sincronizar estado local con workspaceState cuando cambie
   useEffect(() => {
@@ -630,6 +632,18 @@ const EducationalWorkspace = ({
                       >
                         <User size={12} /> POS
                       </button>
+                      {/* Botón DOC - Documentación educativa */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedProjectionForDoc(proj.title);
+                          setDocModalOpen(true);
+                        }}
+                        className="px-2 py-1 bg-amber-600 text-white text-[9px] font-black tracking-widest rounded-md hover:bg-amber-600/90 transition-all duration-300 flex items-center gap-1 shadow-lg active:scale-95 border border-white/10"
+                        title="Documentación Educativa"
+                      >
+                        <FileText size={12} /> DOC
+                      </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); toggleValidation(actualIndex); }}
                         disabled={!hasCaptured}
@@ -775,6 +789,172 @@ const EducationalWorkspace = ({
                 <p className="text-[9px] text-slate-200 text-center font-medium uppercase tracking-wide">
                   Referencia de posicionamiento del paciente antes de la adquisición
                 </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal de Documentación Educativa (DOC) */}
+      <AnimatePresence>
+        {docModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 backdrop-blur-sm"
+            onClick={() => setDocModalOpen(false)}
+          >
+            <div className="relative max-w-7xl w-full max-h-[95vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              {/* Header */}
+              <div className="sticky top-0 bg-slate-900 p-4 flex items-center justify-between border-b border-white/10 z-10">
+                <div className="flex items-center gap-4">
+                  <div className="size-10 bg-amber-500/20 rounded-lg flex items-center justify-center border border-amber-500/30">
+                    <FileText size={20} className="text-amber-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-white uppercase tracking-wider">
+                      {selectedProjectionForDoc}
+                    </h3>
+                    <p className="text-[10px] text-amber-400 font-bold uppercase mt-0.5">
+                      Documentación Educativa
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setDocModalOpen(false)}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  <X size={20} className="text-white" />
+                </button>
+              </div>
+
+              {/* Contenido - Layout de 2 columnas para mejor lectura */}
+              <div className="p-6">
+                {ProjectionDocs[selectedProjectionForDoc] ? (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Columna Izquierda */}
+                    <div className="space-y-6">
+                      {/* Pasos Clave */}
+                      <section className="bg-slate-800/50 rounded-xl p-5 border border-amber-500/20">
+                        <h4 className="text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                          <div className="size-6 bg-amber-500/20 rounded-md flex items-center justify-center">
+                            <Activity size={14} />
+                          </div>
+                          Pasos Clave del Posicionamiento
+                        </h4>
+                        <ol className="space-y-3">
+                          {ProjectionDocs[selectedProjectionForDoc].pasosClave.map((paso, idx) => (
+                            <li key={idx} className="text-sm text-slate-200 flex gap-3 leading-relaxed">
+                              <span className="shrink-0 w-6 h-6 bg-amber-500/30 rounded-full flex items-center justify-center text-[11px] font-bold text-amber-400">
+                                {idx + 1}
+                              </span>
+                              <span className="pt-0.5">{paso}</span>
+                            </li>
+                          ))}
+                        </ol>
+                      </section>
+
+                      {/* Anatomía Visualizada */}
+                      <section className="bg-slate-800/50 rounded-xl p-5 border border-white/10">
+                        <h4 className="text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                          <div className="size-6 bg-amber-500/20 rounded-md flex items-center justify-center">
+                            <Activity size={14} />
+                          </div>
+                          Anatomía Visualizada
+                        </h4>
+                        <ul className="space-y-2">
+                          {ProjectionDocs[selectedProjectionForDoc].anatomiaVisualizada.map((item, idx) => (
+                            <li key={idx} className="text-sm text-slate-200 flex gap-3 leading-relaxed">
+                              <span className="shrink-0 w-2 h-2 bg-amber-500 rounded-full mt-1.5" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    </div>
+
+                    {/* Columna Derecha */}
+                    <div className="space-y-6">
+                      {/* Utilidad Clínica */}
+                      <section className="bg-slate-800/50 rounded-xl p-5 border border-white/10">
+                        <h4 className="text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                          <div className="size-6 bg-amber-500/20 rounded-md flex items-center justify-center">
+                            <Activity size={14} />
+                          </div>
+                          Utilidad Clínica
+                        </h4>
+                        <ul className="space-y-2">
+                          {ProjectionDocs[selectedProjectionForDoc].utilidadClinica.map((item, idx) => (
+                            <li key={idx} className="text-sm text-slate-200 flex gap-3 leading-relaxed">
+                              <span className="shrink-0 w-2 h-2 bg-amber-500 rounded-full mt-1.5" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+
+                      {/* Criterios de Calidad */}
+                      <section className="bg-emerald-900/20 rounded-xl p-5 border border-emerald-500/30">
+                        <h4 className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                          <div className="size-6 bg-emerald-500/20 rounded-md flex items-center justify-center">
+                            <CheckCircle2 size={14} />
+                          </div>
+                          Criterios de Calidad
+                        </h4>
+                        <ul className="space-y-2">
+                          {ProjectionDocs[selectedProjectionForDoc].criteriosCalidad.map((item, idx) => (
+                            <li key={idx} className="text-sm text-slate-200 flex gap-3 leading-relaxed">
+                              <span className="shrink-0 text-emerald-500 mt-0.5">✅</span>
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+
+                      {/* Errores Comunes */}
+                      <section className="bg-red-900/20 rounded-xl p-5 border border-red-500/30">
+                        <h4 className="text-[11px] font-bold text-red-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                          <div className="size-6 bg-red-500/20 rounded-md flex items-center justify-center">
+                            <AlertTriangle size={14} />
+                          </div>
+                          Errores Comunes
+                        </h4>
+                        <ul className="space-y-2">
+                          {ProjectionDocs[selectedProjectionForDoc].erroresComunes.map((item, idx) => (
+                            <li key={idx} className="text-sm text-slate-200 flex gap-3 leading-relaxed">
+                              <span className="shrink-0 text-red-500 mt-0.5">❌</span>
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-20">
+                    <div className="size-20 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                      <FileText size={40} className="text-slate-500" />
+                    </div>
+                    <p className="text-slate-400 text-sm font-bold uppercase mb-2">Documentación no disponible</p>
+                    <p className="text-slate-500 text-xs">Esta proyección no tiene documentación educativa asociada</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="sticky bottom-0 bg-slate-900/95 p-4 border-t border-white/10">
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] text-slate-300 font-medium uppercase tracking-wide">
+                    Material educativo para formación de profesionales en mamografía
+                  </p>
+                  <button
+                    onClick={() => setDocModalOpen(false)}
+                    className="px-4 py-2 bg-amber-600 hover:bg-amber-600/90 text-white text-[10px] font-bold uppercase tracking-wider rounded-lg transition-colors"
+                  >
+                    Cerrar
+                  </button>
+                </div>
               </div>
             </div>
           </motion.div>
