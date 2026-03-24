@@ -194,8 +194,8 @@ const ExportScreen = ({ patient, capturedImages, workspaceState, onBack, onFinis
                       />
 
                       {/* Official Patient Record Overlay (Impreso sobre la imagen) */}
-                      <div className="absolute top-6 left-6 text-white pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-                        <div className="flex flex-col gap-0.5 font-mono text-[9px] font-bold uppercase tracking-tight">
+                      <div className={`absolute ${finalImages.length > 1 ? 'top-3 left-3' : 'top-5 left-5'} text-white pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]`}>
+                        <div className={`flex flex-col gap-0.5 font-mono ${finalImages.length > 1 ? 'text-[7px]' : 'text-[9px]'} font-bold uppercase tracking-tight opacity-70`}>
                           <p>ID: {patient?.id || '0000'}</p>
                           <p>PACIENTE: {patient?.name || 'Invitado'}</p>
                           <p>EDAD: {patient?.age || '--'} AÑOS</p>
