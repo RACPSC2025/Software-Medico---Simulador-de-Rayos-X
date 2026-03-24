@@ -14,10 +14,12 @@ import {
   Download,
   Upload,
   RotateCcw,
-  AlertCircle
+  AlertCircle,
+  Eye
 } from 'lucide-react';
 import { useDocumentacion } from '../hooks/useDocumentacion';
 import { EditorDocumento } from './editor-documentacion';
+import { OtherImages } from '../assets';
 
 // Helper para obtener docs desde window (inyectados en main.tsx)
 const getDocsFromWindow = () => {
@@ -280,14 +282,91 @@ const DocumentoDetalle: React.FC<DocumentoDetalleProps> = ({ documento, onBack, 
   );
 };
 
+const MamografoVisualGuide = ({ onPreview }: { onPreview: (img: string, title: string) => void }) => (
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    className="mb-10 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl border border-primary/20 p-8 overflow-hidden relative"
+  >
+    <div className="relative z-10">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="size-10 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/30">
+          <BookOpen className="text-primary" size={24} />
+        </div>
+        <div>
+          <h2 className="text-xl font-black text-white uppercase tracking-tight">Conociendo el Mamógrafo</h2>
+          <p className="text-xs text-slate-400">Guía visual de los componentes externos y partes del equipo técnico</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Parte 1: El Equipo */}
+        <div className="space-y-4">
+          <div 
+            onClick={() => onPreview(OtherImages.MAMOGRAFO_1, "Máquina de Mamografía - Componentes Generales")}
+            className="relative aspect-video rounded-xl overflow-hidden border border-white/5 bg-black/40 group cursor-zoom-in"
+          >
+            <img 
+              src={OtherImages.MAMOGRAFO_1} 
+              alt="Maquina de Mamografía" 
+              className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <div className="size-12 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary backdrop-blur-sm">
+                <Eye size={24} />
+              </div>
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent group-hover:opacity-0 transition-opacity" />
+            <div className="absolute bottom-4 left-4">
+              <span className="text-[10px] font-black text-primary uppercase bg-primary/10 px-2 py-1 rounded-md border border-primary/20">Componentes Generales</span>
+            </div>
+          </div>
+          <p className="text-[11px] text-slate-400 leading-relaxed italic border-l-2 border-primary/30 pl-4">
+            Visualización frontal del estativo y brazo en C, permitiendo una amplia gama de movimientos para el posicionamiento óptimo del paciente.
+          </p>
+        </div>
+
+        {/* Parte 2: El Tablero / Partes */}
+        <div className="space-y-4">
+          <div 
+            onClick={() => onPreview(OtherImages.MAMOGRAFO_2, "Partes del Mamógrafo - Identificación Técnica")}
+            className="relative aspect-video rounded-xl overflow-hidden border border-white/5 bg-black/40 group cursor-zoom-in"
+          >
+            <img 
+              src={OtherImages.MAMOGRAFO_2} 
+              alt="Partes del Mamógrafo" 
+              className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <div className="size-12 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 backdrop-blur-sm">
+                <Eye size={24} />
+              </div>
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent group-hover:opacity-0 transition-opacity" />
+            <div className="absolute bottom-4 left-4">
+              <span className="text-[10px] font-black text-emerald-400 uppercase bg-emerald-500/10 px-2 py-1 rounded-md border border-emerald-500/20">Identificación de Partes</span>
+            </div>
+          </div>
+          <p className="text-[11px] text-slate-400 leading-relaxed italic border-l-2 border-emerald-500/30 pl-4">
+            Detalle técnico de los controles de compresión, colimadores y sistemas de visualización directa del equipo.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {/* Decoración fondo */}
+    <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 blur-[100px] pointer-events-none" />
+  </motion.div>
+);
+
 export const Biblioteca: React.FC = () => {
   const { guardarOverride, exportarDocumentacion, importarDocumentacion, resetOverrides, hasOverrides } = useDocumentacion();
   const [vista, setVista] = useState<'lista' | 'detalle' | 'editar'>('lista');
   const [docSeleccionado, setDocSeleccionado] = useState<string | null>(null);
   const [busqueda, setBusqueda] = useState('');
   const [categoriaFiltro, setCategoriaFiltro] = useState<string>('todas');
-  const [mostrarConfirmacionReset, setMostrarConfirmacionReset] = useState(false);
   const [mensajeImportacion, setMensajeImportacion] = useState<{ tipo: 'success' | 'error', texto: string } | null>(null);
+  const [previewImage, setPreviewImage] = useState<{ url: string, title: string } | null>(null);
 
   // Obtener documentos desde window (inyectados en main.tsx)
   const docsFromWindow = getDocsFromWindow();
@@ -389,32 +468,24 @@ export const Biblioteca: React.FC = () => {
 
             {/* Acciones */}
             <div className="flex items-center gap-2">
-              {/* Botón Exportar */}
               <button
                 onClick={handleExportar}
                 className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-all shadow-lg shadow-emerald-600/20"
-                title="Descargar documentación actual como archivo JSON"
               >
                 <Download size={16} />
                 Exportar
               </button>
-
-              {/* Botón Importar */}
               <button
                 onClick={handleImportarClick}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-all shadow-lg shadow-blue-600/20"
-                title="Cargar documentación desde archivo JSON"
               >
                 <Upload size={16} />
                 Importar
               </button>
-
-              {/* Botón Reset (solo si hay overrides) */}
               {hasOverrides && (
                 <button
                   onClick={handleReset}
                   className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-all shadow-lg shadow-red-600/20"
-                  title="Descartar ediciones locales y volver al original"
                 >
                   <RotateCcw size={16} />
                   Resetear
@@ -423,7 +494,6 @@ export const Biblioteca: React.FC = () => {
             </div>
           </div>
 
-          {/* Mensaje de importación */}
           {mensajeImportacion && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
@@ -448,9 +518,7 @@ export const Biblioteca: React.FC = () => {
             </motion.div>
           )}
 
-          {/* Buscador y Filtros */}
           <div className="flex flex-col md:flex-row gap-4 mt-6">
-            {/* Buscador */}
             <div className="flex-1 relative">
               <Search 
                 size={18} 
@@ -461,23 +529,14 @@ export const Biblioteca: React.FC = () => {
                 placeholder="Buscar por título o nombre..."
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-slate-800/50 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
+                className="w-full pl-10 pr-4 py-3 bg-slate-800/50 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-primary/50"
               />
-              {busqueda && (
-                <button
-                  onClick={() => setBusqueda('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
-                >
-                  <X size={16} />
-                </button>
-              )}
             </div>
 
-            {/* Filtro por categoría */}
             <select
               value={categoriaFiltro}
               onChange={(e) => setCategoriaFiltro(e.target.value)}
-              className="px-4 py-3 bg-slate-800/50 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all cursor-pointer"
+              className="px-4 py-3 bg-slate-800/50 border border-white/10 rounded-xl text-sm text-white focus:outline-none border-transparent focus:border-primary/50"
             >
               <option value="todas">Todas las categorías</option>
               {categorias.map((cat) => (
@@ -488,78 +547,78 @@ export const Biblioteca: React.FC = () => {
             </select>
           </div>
 
-          {/* Contador de resultados */}
-          <div className="mt-4 text-[10px] text-slate-500 uppercase tracking-wider">
+          <div className="mt-4 text-[10px] text-slate-500 uppercase tracking-wider mb-6">
             {documentosFiltrados.length} de {documentosArray.length} documentos
           </div>
+
+          {vista === 'lista' && <MamografoVisualGuide onPreview={(img, title) => setPreviewImage({ url: img, title })} />}
         </div>
 
-        {/* Contenido */}
         <AnimatePresence mode="wait">
           {vista === 'lista' ? (
-            <motion.div
-              key="lista"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {documentosFiltrados.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {documentosFiltrados.map((doc) => (
-                    <DocumentoCard
-                      key={doc.id}
-                      documento={doc}
-                      onClick={() => handleVerDetalle(doc.id)}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-20">
-                  <div className="size-20 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <Search size={40} className="text-slate-500" />
-                  </div>
-                  <p className="text-slate-400 text-sm font-bold uppercase mb-2">
-                    No se encontraron documentos
-                  </p>
-                  <p className="text-slate-500 text-xs">
-                    Intenta con otros términos de búsqueda o cambia el filtro de categoría
-                  </p>
-                </div>
-              )}
+            <motion.div key="lista" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {documentosFiltrados.map((doc) => (
+                  <DocumentoCard key={doc.id} documento={doc} onClick={() => handleVerDetalle(doc.id)} />
+                ))}
+              </div>
             </motion.div>
           ) : vista === 'editar' ? (
-            <motion.div
-              key="editar"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
+            <motion.div key="editar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               {docSeleccionado && docsFromWindow[docSeleccionado] && (
-                <EditorDocumento
-                  documento={docsFromWindow[docSeleccionado]}
-                  onSave={handleGuardarEdicion}
-                  onCancel={handleVolver}
-                />
+                <EditorDocumento documento={docsFromWindow[docSeleccionado]} onSave={handleGuardarEdicion} onCancel={handleVolver} />
               )}
             </motion.div>
           ) : (
-            <motion.div
-              key="detalle"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
+            <motion.div key="detalle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               {docSeleccionado && docsFromWindow[docSeleccionado] && (
-                <DocumentoDetalle
-                  documento={docsFromWindow[docSeleccionado]}
-                  onBack={handleVolver}
-                  onEdit={handleEditar}
-                />
+                <DocumentoDetalle documento={docsFromWindow[docSeleccionado]} onBack={handleVolver} onEdit={handleEditar} />
               )}
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      {/* Modal de Previsualización */}
+      <AnimatePresence>
+        {previewImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setPreviewImage(null)}
+            className="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 lg:p-10"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-w-4xl w-full bg-slate-900 rounded-2xl overflow-hidden border border-white/10 shadow-2xl"
+            >
+              <div className="p-4 bg-slate-800 border-b border-white/10 flex items-center justify-between">
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">{previewImage.title}</h3>
+                <button
+                  onClick={() => setPreviewImage(null)}
+                  className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                >
+                  <X size={20} className="text-white" />
+                </button>
+              </div>
+              <div className="p-2 bg-black flex items-center justify-center min-h-[50vh] max-h-[70vh]">
+                <img 
+                  src={previewImage.url} 
+                  alt={previewImage.title} 
+                  className="max-w-full max-h-full object-contain shadow-2xl"
+                />
+              </div>
+              <div className="p-4 bg-slate-800 border-t border-white/10 text-center text-[10px] text-slate-400 uppercase font-black tracking-[0.2em] cursor-pointer" onClick={() => setPreviewImage(null)}>
+                Click para cerrar previsualización
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

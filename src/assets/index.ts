@@ -19,12 +19,11 @@ import mama_mlo_i_protesis_eklund from './MAMA MLO I PROTESIS EKLUND.png';
 // Proyecciones - Guías de Posicionamiento (Específicas D e I)
 import mama_cc_d_pos from './Proyecciones/MAMA CC D.jpeg';
 import mama_cc_i_pos from './Proyecciones/MAMA CC I.jpeg';
+import mama_cc_d_2 from './Proyecciones/MAMA CC D 2.png';
 import mama_mlo_d_1 from './Proyecciones/MAMA MLO D 1.jpeg';
 import mama_mlo_d_2 from './Proyecciones/MAMA MLO D 2.png';
 import mama_mlo_i_1 from './Proyecciones/MAMA MLO I 1.jpeg';
 import mama_mlo_i_2 from './Proyecciones/MAMA MLO I 2.png';
-import mama_cc_1 from './Proyecciones/MAMA CC 1.png';
-import mama_cc_2 from './Proyecciones/MAMA CC 2.png';
 import mama_cv_pos from './Proyecciones/MAMA CV.png';
 import mama_eklund_tecnica from './Proyecciones/MAMA EKLUND TECNICA.webp';
 import mama_lm from './Proyecciones/MAMA LM.png';
@@ -47,6 +46,8 @@ import avatar from './AVATAR.png';
 import logo from './Logo.jpeg';
 import mama_completa_basico from './MAMA COMPLETA BASICO.jpeg';
 import axilar_derecha_izquierda from './Axilar Derecha e Izquierda.jpeg';
+import mamografo_1 from './MAMOGRAFO 1.webp';
+import mamografo_2 from './MAMOGRAFO 2.webp';
 
 export const MammographyImages: { [key: string]: string } = {
   // Básicas
@@ -75,6 +76,8 @@ export const MammographyImages: { [key: string]: string } = {
 export const OtherImages = {
   AVATAR: avatar,
   LOGO: logo,
+  MAMOGRAFO_1: mamografo_1,
+  MAMOGRAFO_2: mamografo_2,
   RADIO_FINAL_BASICO: mama_completa_basico,
   RADIO_FINAL_PROTESIS: mama_completa_protesis,
   RADIO_FINAL_PROTESIS_EKLUND: mama_completa_protesis_eklund,
@@ -84,12 +87,12 @@ export const OtherImages = {
 // Guías de Posicionamiento por tipo de proyección
 export const PositioningGuides: { [key: string]: string[] } = {
   // MAMA CC (Específicas D e I)
-  'MAMA CC D': [mama_cc_d_pos, mama_cc_1, mama_cc_2],
-  'MAMA CC I': [mama_cc_i_pos, mama_cc_1, mama_cc_2],
-  'MAMA CC D PROTESIS': [mama_cc_d_pos, mama_cc_1, mama_cc_2],
-  'MAMA CC I PROTESIS': [mama_cc_i_pos, mama_cc_1, mama_cc_2],
-  'MAMA CC D PROTESIS EKLUND': [mama_cc_d_pos, mama_cc_1, mama_cc_2],
-  'MAMA CC I PROTESIS EKLUND': [mama_cc_i_pos, mama_cc_1, mama_cc_2],
+  'MAMA CC D': [mama_cc_d_pos, mama_cc_d_2],
+  'MAMA CC I': [mama_cc_i_pos],
+  'MAMA CC D PROTESIS': [mama_cc_d_pos, mama_cc_d_2],
+  'MAMA CC I PROTESIS': [mama_cc_i_pos],
+  'MAMA CC D PROTESIS EKLUND': [mama_cc_d_pos, mama_cc_d_2, mama_eklund_tecnica],
+  'MAMA CC I PROTESIS EKLUND': [mama_cc_i_pos, mama_eklund_tecnica],
   // MAMA MLO (Específicas D e I - con 2 vistas corregidas)
   'MAMA MLO D': [mama_mlo_d_1, mama_mlo_d_2],
   'MAMA MLO I': [mama_mlo_i_1, mama_mlo_i_2],
@@ -105,53 +108,13 @@ export const PositioningGuides: { [key: string]: string[] } = {
   'MAMA MX MAG AXILAR': [mama_mx_mag_axilar],
 };
 
-/**
- * ProjectionDocs cargado desde JSON
- * 
- * NOTA: Esta función asíncrona carga los datos desde el JSON estático.
- * Para usar en componentes React, preferir el hook useProjectionDocs.
- * 
- * @example
- * // En componente React:
- * const { docs, loading } = useProjectionDocs();
- * 
- * // Fuera de React (con cuidado):
- * const docs = await loadProjectionDocs();
- */
-export const loadProjectionDocs = async (): Promise<Record<string, {
-  pasosClave: string[];
-  anatomiaVisualizada: string[];
-  utilidadClinica: string[];
-  criteriosCalidad: string[];
-  erroresComunes: string[];
-}>> => {
+export const loadProjectionDocs = async (): Promise<Record<string, any>> => {
   const response = await fetch('/data/documentacion.json');
-  const data = await response.json();
-  
-  // Mapear a la estructura antigua para compatibilidad
-  const projectionDocs: Record<string, any> = {};
-  
-  Object.values(data.documentos).forEach((doc: any) => {
-    // Convertir ID del JSON al formato antiguo (ej: 'mama-cc-d' → 'MAMA CC D')
-    const tituloOriginal = doc.titulo;
-    projectionDocs[tituloOriginal] = doc.contenido;
-  });
-  
-  return projectionDocs;
+  return await response.json();
 };
 
-// Placeholder vacío para compatibilidad
-// El código existente que usa ProjectionDocs directamente debería migrar a useProjectionDocs
-export const ProjectionDocs: Record<string, {
-  pasosClave: string[];
-  anatomiaVisualizada: string[];
-  utilidadClinica: string[];
-  criteriosCalidad: string[];
-  erroresComunes: string[];
-}> = {};
+export const ProjectionDocs: Record<string, any> = {};
 
-// Imágenes de Rayos X por región (placeholders - agregar archivos a la carpeta assets)
-// Por ahora usan las mismas imágenes de mamografía como placeholder
 export const XRayImages: { [key: string]: { [key: string]: string } } = {
   chest: {
     'TORAX PA': mama_cc_d,
