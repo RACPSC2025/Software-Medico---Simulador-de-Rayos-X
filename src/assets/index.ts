@@ -1,8 +1,8 @@
-// Mamografías Básicas - Versiones PNG
-import mama_cc_d from './MAMA CC D.png';
-import mama_cc_i from './MAMA CC I.png';
-import mama_mlo_d from './MAMA MLO D.png';
-import mama_mlo_i from './MAMA MLO I.png';
+// Mamografías Básicas - Versiones Actualizadas (JPEG)
+import mama_cc_d from './MAMA CC D.jpeg';
+import mama_cc_i from './MAMA CC I.jpeg';
+import mama_mlo_d from './MAMA MLO D.jpeg';
+import mama_mlo_i from './MAMA MLO I.jpeg';
 
 // Mamografías con Prótesis
 import mama_cc_d_protesis from './MAMA CC D PROTESIS.png';
@@ -16,14 +16,19 @@ import mama_cc_i_protesis_eklund from './MAMA CC I PROTESIS EKLUND.png';
 import mama_mlo_d_protesis_eklund from './MAMA MLO D PROTESIS EKLUND.png';
 import mama_mlo_i_protesis_eklund from './MAMA MLO I PROTESIS EKLUND.png';
 
-// Proyecciones - Guías de Posicionamiento
+// Proyecciones - Guías de Posicionamiento (Específicas D e I)
+import mama_cc_d_pos from './Proyecciones/MAMA CC D.jpeg';
+import mama_cc_i_pos from './Proyecciones/MAMA CC I.jpeg';
+import mama_mlo_d_1 from './Proyecciones/MAMA MLO D 1.jpeg';
+import mama_mlo_d_2 from './Proyecciones/MAMA MLO D 2.png';
+import mama_mlo_i_1 from './Proyecciones/MAMA MLO I 1.jpeg';
+import mama_mlo_i_2 from './Proyecciones/MAMA MLO I 2.png';
 import mama_cc_1 from './Proyecciones/MAMA CC 1.png';
 import mama_cc_2 from './Proyecciones/MAMA CC 2.png';
 import mama_cv_pos from './Proyecciones/MAMA CV.png';
 import mama_eklund_tecnica from './Proyecciones/MAMA EKLUND TECNICA.webp';
 import mama_lm from './Proyecciones/MAMA LM.png';
 import mama_ml_1 from './Proyecciones/MAMA ML 1.png';
-import mama_mlo_1 from './Proyecciones/MAMA MLO 1.png';
 import mama_mx_mag_axilar from './Proyecciones/MAMA MX MAG Axilar Proyeccion.png';
 import mamografo from './Proyecciones/Mamografo.jpg';
 import maquina_mamografia from './Proyecciones/Maquina de Mamografia.webp';
@@ -39,6 +44,7 @@ import mama_completa_protesis_eklund from './MAMA COMPLETA PROTESIS EKLUND.png';
 
 // Otras imágenes
 import avatar from './AVATAR.png';
+import logo from './Logo.jpeg';
 import mama_completa_basico from './MAMA COMPLETA BASICO.jpeg';
 import axilar_derecha_izquierda from './Axilar Derecha e Izquierda.jpeg';
 
@@ -68,6 +74,7 @@ export const MammographyImages: { [key: string]: string } = {
 
 export const OtherImages = {
   AVATAR: avatar,
+  LOGO: logo,
   RADIO_FINAL_BASICO: mama_completa_basico,
   RADIO_FINAL_PROTESIS: mama_completa_protesis,
   RADIO_FINAL_PROTESIS_EKLUND: mama_completa_protesis_eklund,
@@ -76,20 +83,20 @@ export const OtherImages = {
 
 // Guías de Posicionamiento por tipo de proyección
 export const PositioningGuides: { [key: string]: string[] } = {
-  // MAMA CC (tanto D como I, con/sin prótesis) - usan las mismas guías
-  'MAMA CC D': [mama_cc_1, mama_cc_2],
-  'MAMA CC I': [mama_cc_1, mama_cc_2],
-  'MAMA CC D PROTESIS': [mama_cc_1, mama_cc_2],
-  'MAMA CC I PROTESIS': [mama_cc_1, mama_cc_2],
-  'MAMA CC D PROTESIS EKLUND': [mama_cc_1, mama_cc_2],
-  'MAMA CC I PROTESIS EKLUND': [mama_cc_1, mama_cc_2],
-  // MAMA MLO
-  'MAMA MLO D': [mama_mlo_1],
-  'MAMA MLO I': [mama_mlo_1],
-  'MAMA MLO D PROTESIS': [mama_mlo_1],
-  'MAMA MLO I PROTESIS': [mama_mlo_1],
-  'MAMA MLO D PROTESIS EKLUND': [mama_mlo_1, mama_eklund_tecnica],
-  'MAMA MLO I PROTESIS EKLUND': [mama_mlo_1, mama_eklund_tecnica],
+  // MAMA CC (Específicas D e I)
+  'MAMA CC D': [mama_cc_d_pos, mama_cc_1, mama_cc_2],
+  'MAMA CC I': [mama_cc_i_pos, mama_cc_1, mama_cc_2],
+  'MAMA CC D PROTESIS': [mama_cc_d_pos, mama_cc_1, mama_cc_2],
+  'MAMA CC I PROTESIS': [mama_cc_i_pos, mama_cc_1, mama_cc_2],
+  'MAMA CC D PROTESIS EKLUND': [mama_cc_d_pos, mama_cc_1, mama_cc_2],
+  'MAMA CC I PROTESIS EKLUND': [mama_cc_i_pos, mama_cc_1, mama_cc_2],
+  // MAMA MLO (Específicas D e I - con 2 vistas corregidas)
+  'MAMA MLO D': [mama_mlo_d_1, mama_mlo_d_2],
+  'MAMA MLO I': [mama_mlo_i_1, mama_mlo_i_2],
+  'MAMA MLO D PROTESIS': [mama_mlo_d_1, mama_mlo_d_2],
+  'MAMA MLO I PROTESIS': [mama_mlo_i_1, mama_mlo_i_2],
+  'MAMA MLO D PROTESIS EKLUND': [mama_mlo_d_1, mama_mlo_d_2, mama_eklund_tecnica],
+  'MAMA MLO I PROTESIS EKLUND': [mama_mlo_i_1, mama_mlo_i_2, mama_eklund_tecnica],
   // MAMA CV
   'MAMA CV': [mama_cv_pos],
   // MAMA CC MAG

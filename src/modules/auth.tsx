@@ -69,7 +69,7 @@ const LoginScreen = ({ onNavigate, onLogin, isDarkMode, onToggleTheme }: any) =>
     const loginEmail = email.trim() || "Invitado";
     localStorage.setItem('userEmail', loginEmail);
     onLogin(loginEmail);
-    onNavigate('patient-registration');
+    onNavigate('home');
   };
 
   return (

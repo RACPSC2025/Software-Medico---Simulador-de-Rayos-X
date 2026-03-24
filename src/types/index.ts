@@ -1,8 +1,9 @@
-export // Types
+// Types
 export type Screen =
   | 'login'
   | 'register'
   | 'recovery'
+  | 'home'
   | 'patient-registration'
   | 'professional-directory'
   | 'export-share'

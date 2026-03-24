@@ -9,6 +9,7 @@ import { XRaySimulator } from "./modules/simulator";
 import { ExportScreen } from './modules/export';
 import { ProfessionalDirectory } from "./modules/directory";
 import { Biblioteca } from './modules/biblioteca';
+import { HomeScreen } from './modules/home';
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('login');
@@ -134,6 +135,18 @@ export default function App() {
             onToggleTheme={() => setIsDarkMode(!isDarkMode)}
           >
             <Biblioteca />
+          </DashboardLayout>
+        );
+      case 'home':
+        return (
+          <DashboardLayout
+            userEmail={userEmail}
+            currentScreen={screen}
+            onNavigate={handleNavigate}
+            isDarkMode={isDarkMode}
+            onToggleTheme={() => setIsDarkMode(!isDarkMode)}
+          >
+            <HomeScreen onNavigate={handleNavigate} userEmail={userEmail} />
           </DashboardLayout>
         );
       default:

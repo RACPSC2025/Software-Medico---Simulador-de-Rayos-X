@@ -168,28 +168,17 @@ const ExportScreen = ({ patient, capturedImages, workspaceState, onBack, onFinis
               {/* Mostrar una o dos imágenes según el tipo de paciente */}
               <div className={`grid gap-6 ${finalImages.length === 1 ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
                 {finalImages.map((img, idx) => (
-                  <div key={idx} className="space-y-4">
-                    {/* Header with formal clinic-style "membrete" */}
-                    <div className="flex items-end justify-between px-2 border-b border-white/5 pb-2">
-                      <div className="flex flex-col gap-0.5">
-                        <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Registro Radiológico</p>
-                        <h4 className="text-[14px] font-bold text-white uppercase leading-none tracking-tight">{patient?.name || 'Invitado'}</h4>
-                        <div className="flex items-center gap-3 mt-1.5">
-                          <span className="text-[9px] font-mono text-slate-400">ID: {patient?.id || 'N/A'}</span>
-                          <span className="text-[9px] font-mono text-slate-400">FECHA: {new Date().toLocaleDateString()}</span>
-                        </div>
+                  <div key={idx} className="space-y-3">
+                    {/* External Header - Only for descriptive titles */}
+                    <div className="flex items-center justify-between px-2">
+                      <div className="bg-primary/20 border border-primary/50 px-3 py-1.5 rounded-lg">
+                        <p className="text-[10px] font-black text-primary uppercase tracking-widest">{img.title}</p>
                       </div>
-                      
-                      <div className="flex flex-col items-end gap-1.5">
-                        <div className="bg-primary/20 border border-primary/50 px-3 py-1.5 rounded-lg shadow-[0_0_15px_rgba(var(--medical-accent-rgb),0.1)]">
-                          <p className="text-[10px] font-black text-primary uppercase tracking-widest">{img.title}</p>
+                      {img.title.includes('EKLUND') && (
+                        <div className="bg-amber-500/20 px-3 py-1.5 rounded-lg border border-amber-500/50">
+                          <p className="text-[9px] font-black text-amber-500 uppercase tracking-widest">Técnica Eklund</p>
                         </div>
-                        {img.title.includes('EKLUND') && (
-                          <div className="bg-amber-500/20 px-3 py-1.5 rounded-lg border border-amber-500/50">
-                            <p className="text-[9px] font-black text-amber-500 uppercase tracking-widest">Técnica Eklund</p>
-                          </div>
-                        )}
-                      </div>
+                      )}
                     </div>
 
                     <div className="aspect-[4/3] bg-black rounded-3xl overflow-hidden border border-slate-800 relative shadow-2xl group/image">
@@ -203,6 +192,16 @@ const ExportScreen = ({ patient, capturedImages, workspaceState, onBack, onFinis
                         className="w-full h-full object-contain grayscale opacity-90 transition-all duration-700 group-hover/image:opacity-100 group-hover/image:scale-[1.02]"
                         alt={img.title}
                       />
+
+                      {/* Official Patient Record Overlay (Impreso sobre la imagen) */}
+                      <div className="absolute top-6 left-6 text-white pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                        <div className="flex flex-col gap-0.5 font-mono text-[9px] font-bold uppercase tracking-tight">
+                          <p>ID: {patient?.id || '0000'}</p>
+                          <p>PACIENTE: {patient?.name || 'Invitado'}</p>
+                          <p>EDAD: {patient?.age || '--'} AÑOS</p>
+                          <p>FECHA: {new Date().toLocaleDateString()}</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}

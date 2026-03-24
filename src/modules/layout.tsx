@@ -64,17 +64,18 @@ import { OtherImages } from "../assets";
 
 const TopNavbar = ({ currentScreen, onNavigate, userEmail, isDarkMode, onToggleTheme }: any) => {
   const navItems = [
+    { id: 'home', label: 'Inicio', icon: Activity },
     { id: 'patient-registration', label: 'Registro', icon: User },
     { id: 'educational-workspace', label: 'Estudios', icon: FileText },
     { id: 'xray-simulator', label: 'Rayos X', icon: Play },
-    { id: 'biblioteca', label: 'Biblioteca', icon: BookOpen },
     { id: 'export-share', label: 'Exportar', icon: Share2 },
+    { id: 'biblioteca', label: 'Biblioteca', icon: BookOpen },
   ];
 
   return (
     <header className="h-12 bg-white dark:bg-card-dark border-b border-slate-200 dark:border-border-dark flex items-center justify-between px-4 sticky top-0 z-50 transition-colors duration-300">
       <div className="flex items-center gap-6">
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => onNavigate('patient-registration')}>
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => onNavigate('home')}>
           <div className="bg-primary rounded-lg p-1 flex items-center justify-center text-white shadow-[0_0_10px_rgba(26,86,219,0.3)]">
             <Activity size={18} />
           </div>
