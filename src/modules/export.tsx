@@ -168,36 +168,42 @@ const ExportScreen = ({ patient, capturedImages, workspaceState, onBack, onFinis
               {/* Mostrar una o dos imágenes según el tipo de paciente */}
               <div className={`grid gap-6 ${finalImages.length === 1 ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
                 {finalImages.map((img, idx) => (
-                  <div key={idx} className="aspect-[4/3] bg-black rounded-2xl overflow-hidden border border-slate-800 relative shadow-inner group/image">
-                    {/* Simulated Grid Overlay */}
-                    <div className="absolute inset-0 pointer-events-none grid grid-cols-4 grid-rows-3 opacity-10">
-                      {[...Array(12)].map((_, i) => <div key={i} className="border border-white/20" />)}
-                    </div>
-
-                    <img
-                      src={img.src}
-                      className="w-full h-full object-contain grayscale opacity-90 transition-all duration-700 group-hover/image:opacity-100 group-hover/image:scale-[1.02]"
-                      alt={img.title}
-                    />
-
-                    {/* Image Title Overlay */}
-                    <div className="absolute top-4 left-4 bg-primary/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-primary/50">
-                      <p className="text-[8px] font-bold text-white uppercase tracking-wider">{img.title}</p>
-                    </div>
-
-                    {/* Patient Tag Overlay */}
-                    <div className="absolute bottom-6 right-6 bg-black/60 backdrop-blur-md p-3 rounded-xl border border-white/10 text-white">
-                      <p className="text-[8px] font-mono opacity-50 uppercase mb-0.5">Patient Record</p>
-                      <p className="text-[10px] font-bold uppercase">{patient?.name}</p>
-                      <p className="text-[8px] font-mono opacity-50 mt-1">{new Date().toLocaleDateString()}</p>
-                    </div>
-
-                    {/* Eklund Badge */}
-                    {img.title.includes('EKLUND') && (
-                      <div className="absolute top-4 right-4 bg-amber-500/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-amber-400">
-                        <p className="text-[8px] font-black text-white uppercase tracking-wider">Técnica Eklund</p>
+                  <div key={idx} className="space-y-4">
+                    {/* Header with formal clinic-style "membrete" */}
+                    <div className="flex items-end justify-between px-2 border-b border-white/5 pb-2">
+                      <div className="flex flex-col gap-0.5">
+                        <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Registro Radiológico</p>
+                        <h4 className="text-[14px] font-bold text-white uppercase leading-none tracking-tight">{patient?.name || 'Invitado'}</h4>
+                        <div className="flex items-center gap-3 mt-1.5">
+                          <span className="text-[9px] font-mono text-slate-400">ID: {patient?.id || 'N/A'}</span>
+                          <span className="text-[9px] font-mono text-slate-400">FECHA: {new Date().toLocaleDateString()}</span>
+                        </div>
                       </div>
-                    )}
+                      
+                      <div className="flex flex-col items-end gap-1.5">
+                        <div className="bg-primary/20 border border-primary/50 px-3 py-1.5 rounded-lg shadow-[0_0_15px_rgba(var(--medical-accent-rgb),0.1)]">
+                          <p className="text-[10px] font-black text-primary uppercase tracking-widest">{img.title}</p>
+                        </div>
+                        {img.title.includes('EKLUND') && (
+                          <div className="bg-amber-500/20 px-3 py-1.5 rounded-lg border border-amber-500/50">
+                            <p className="text-[9px] font-black text-amber-500 uppercase tracking-widest">Técnica Eklund</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="aspect-[4/3] bg-black rounded-3xl overflow-hidden border border-slate-800 relative shadow-2xl group/image">
+                      {/* Simulated Grid Overlay */}
+                      <div className="absolute inset-0 pointer-events-none grid grid-cols-4 grid-rows-3 opacity-10">
+                        {[...Array(12)].map((_, i) => <div key={i} className="border border-white/20" />)}
+                      </div>
+
+                      <img
+                        src={img.src}
+                        className="w-full h-full object-contain grayscale opacity-90 transition-all duration-700 group-hover/image:opacity-100 group-hover/image:scale-[1.02]"
+                        alt={img.title}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
