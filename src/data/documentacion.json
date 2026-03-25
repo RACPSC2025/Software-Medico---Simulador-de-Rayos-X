@@ -611,47 +611,140 @@
     "mama-cc-mag": {
       "id": "mama-cc-mag",
       "titulo": "MAMA CC MAG",
-      "tituloCompleto": "Mamografía Craneocaudal con Magnificación",
-      "categoria": "proyecciones-diagnosticas",
+      "tituloCompleto": "Mamografía CC MAG (Cráneo-Caudal Magnificada)",
+      "categoria": "proyecciones-especiales",
       "contenido": {
         "pasosClave": [
-          "Posición inicial igual que CC estándar",
-          "Colocar torre de magnificación (aleja mama del detector)",
-          "Posicionar área de interés directamente sobre la abertura",
-          "Ajustar colimación al área de magnificación",
-          "Compresión cuidadosa (sin mover el área de interés)",
-          "Inmovilización estricta (crítico por aumento geométrico)"
+          "Colocar la torre de magnificación sobre el receptor de imagen",
+          "Apoyar la mama en la plataforma elevada para alejarla del detector",
+          "Posicionar el área de interés centrada bajo la paleta de compresión",
+          "Utilizar una paleta de compresión pequeña y focalizada",
+          "Inmovilizar estrictamente a la paciente (crítico para evitar borrosidad)",
+          "Evitar el uso de talco o desodorante (pueden simular microcalcificaciones)"
         ],
         "anatomiaVisualizada": [
-          "Área focalizada: Región específica de interés",
-          "Detalle: Microcalcificaciones, bordes de nódulos",
-          "Resolución: Mayor detalle de estructuras pequeñas"
+          "Área focalizada: Región específica con zoom óptico/geométrico",
+          "Detalle fino: Bordes de lesiones, espículas y arquitectura tisular",
+          "Microcalcificaciones: Magnificación para evaluar forma y distribución"
         ],
         "utilidadClinica": [
-          "Técnica diagnóstica, NO de tamizaje",
-          "Análisis detallado de microcalcificaciones",
-          "Evalúa forma, número y distribución de calcificaciones",
-          "Define bordes de masas o nódulos pequeños"
+          "Proyección complementaria de diagnóstico para evaluar hallazgos dudosos",
+          "Análisis detallado de microcalcificaciones sospechosas",
+          "Evaluación de márgenes en masas o nódulos pequeños",
+          "Crucial para determinar la necesidad de una biopsia",
+          "Ayuda a disminuir falsos positivos al mejorar la visualización"
         ],
         "criteriosCalidad": [
-          "Área de interés centrada y enfocada",
-          "Sin movimiento (crítico por magnificación)",
-          "Microcalcificaciones nítidas si están presentes",
-          "Bordes de lesiones bien definidos"
+          "Área de interés perfectamente centrada y enfocada",
+          "Nitidez absoluta (sin borrosidad por movimiento)",
+          "Visualización clara de la arquitectura en la zona de interés",
+          "Contraste adecuado para distinguir microcalcificaciones"
         ],
         "erroresComunes": [
-          "Movimiento durante la exposición (imagen borrosa)",
-          "Área de interés no centrada correctamente",
-          "Enfoque incorrecto (pérdida de detalle)",
-          "Compresión excesiva que dispersa calcificaciones"
+          "Movimiento de la paciente durante la exposición (borrosidad)",
+          "Área de interés fuera del campo de magnificación",
+          "Compresión excesiva que deforma la lesión",
+          "Artefactos por cosméticos (talco, desodorante)"
         ]
       },
       "metadata": {
         "autor": "Equipo Radiología Pro",
-        "fechaCreacion": "2026-01-15",
-        "ultimaRevision": "2026-03-20",
+        "fechaCreacion": "2026-03-25",
+        "ultimaRevision": "2026-03-25",
         "version": "1.0.0"
       }
     }
+,
+    "mama-ax-d": {
+      "id": "mama-ax-d",
+      "titulo": "MAMA AX D",
+      "tituloCompleto": "Mamografía Axilar Derecha",
+      "categoria": "proyecciones-especiales",
+      "contenido": {
+        "pasosClave": [
+          "Paciente en posición similar a MLO pero con foco en axila",
+          "Elevar el brazo derecho y apoyarlo para exponer la región axilar",
+          "Posicionar el receptor a la altura de la axila derecha",
+          "Incluir la cola de Spence y el tejido mamario lateral",
+          "Aplicar compresión suave pero firme en la región axilar",
+          "Asegurar que el hombro no interfiera en la imagen"
+        ],
+        "anatomiaVisualizada": [
+          "Región: Axila derecha y cola de Spence",
+          "Tejidos: Ganglios linfáticos axilares derechos",
+          "Estructuras: Prolongación axilar de la mama"
+        ],
+        "utilidadClinica": [
+          "Visualización específica de la cola de Spence y ganglios axilares",
+          "Detección de masas sospechosas en la axila",
+          "Evaluación de la extensión axilar de hallazgos mamarios",
+          "Investigación de bultos palpables en la región axilar"
+        ],
+        "criteriosCalidad": [
+          "Inclusión total de la cola de Spence",
+          "Ganglios axilares visualizados claramente",
+          "Sin superposición del brazo o el hombro",
+          "Compresión adecuada que permita ver el tejido profundo"
+        ],
+        "erroresComunes": [
+          "Superposición del brazo sobre el área de interés",
+          "Receptor muy bajo (excluye la cola de Spence)",
+          "Compresión insuficiente",
+          "Pliegues cutáneos en la región axilar"
+        ]
+      },
+      "metadata": {
+        "autor": "Equipo Radiología Pro",
+        "fechaCreacion": "2026-03-25",
+        "ultimaRevision": "2026-03-25",
+        "version": "1.0.0"
+      }
+    },
+    "mama-ax-i": {
+      "id": "mama-ax-i",
+      "titulo": "MAMA AX I",
+      "tituloCompleto": "Mamografía Axilar Izquierda",
+      "categoria": "proyecciones-especiales",
+      "contenido": {
+        "pasosClave": [
+          "Paciente en posición similar a MLO pero con foco en axila",
+          "Elevar el brazo izquierdo y apoyarlo para exponer la región axilar",
+          "Posicionar el receptor a la altura de la axila izquierda",
+          "Incluir la cola de Spence y el tejido mamario lateral",
+          "Aplicar compresión suave pero firme en la región axilar",
+          "Asegurar que el hombro no interfiera en la imagen"
+        ],
+        "anatomiaVisualizada": [
+          "Región: Axila izquierda y cola de Spence",
+          "Tejidos: Ganglios linfáticos axilares izquierdos",
+          "Estructuras: Prolongación axilar de la mama"
+        ],
+        "utilidadClinica": [
+          "Visualización específica de la cola de Spence y ganglios axilares",
+          "Detección de masas sospechosas en la axila",
+          "Evaluación de la extensión axilar de hallazgos mamarios",
+          "Investigación de bultos palpables en la región axilar"
+        ],
+        "criteriosCalidad": [
+          "Inclusión total de la cola de Spence",
+          "Ganglios axilares visualizados claramente",
+          "Sin superposición del brazo o el hombro",
+          "Compresión adecuada que permita ver el tejido profundo"
+        ],
+        "erroresComunes": [
+          "Superposición del brazo sobre el área de interés",
+          "Receptor muy bajo (excluye la cola de Spence)",
+          "Compresión insuficiente",
+          "Pliegues cutáneos en la región axilar"
+        ]
+      },
+      "metadata": {
+        "autor": "Equipo Radiología Pro",
+        "fechaCreacion": "2026-03-25",
+        "ultimaRevision": "2026-03-25",
+        "version": "1.0.0"
+      }
+    }
+
   }
 }
