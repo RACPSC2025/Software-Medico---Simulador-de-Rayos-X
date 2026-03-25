@@ -3,6 +3,10 @@ import mama_cc_d from './MAMA CC D.jpeg';
 import mama_cc_i from './MAMA CC I.jpeg';
 import mama_mlo_d from './MAMA MLO D.jpeg';
 import mama_mlo_i from './MAMA MLO I.jpeg';
+import mama_ax_d from './MAMA AX D.png';
+import mama_ax_i from './MAMA AX I.png';
+
+
 
 // Mamografías con Prótesis
 import mama_cc_d_protesis from './MAMA CC D PROTESIS.png';
@@ -28,26 +32,29 @@ import mama_cv_pos from './Proyecciones/MAMA CV.png';
 import mama_eklund_tecnica from './Proyecciones/MAMA EKLUND TECNICA.webp';
 import mama_lm from './Proyecciones/MAMA LM.png';
 import mama_ml_1 from './Proyecciones/MAMA ML 1.png';
-import mama_mx_mag_axilar from './Proyecciones/MAMA MX MAG Axilar Proyeccion.png';
+// Proyecciones eliminadas por falta de archivos
 import mamografo from './Proyecciones/Mamografo.jpg';
 import maquina_mamografia from './Proyecciones/Maquina de Mamografia.webp';
 import partes_mamografo from './Proyecciones/partes-mamografo.webp';
-import proyeccion_magnificacion from './Proyecciones/Proyeccion de Magnificacion - Posicionamiento.jpg';
+import mama_ax_i_pos from './Proyecciones/MAMA AX I.png';
+import mama_cc_mag_pos from './Proyecciones/MAMA CC MAG.jpg';
 
 // Mamografías Especiales
-import mama_cc_mag from './CC MAG Proyeccion de Magnificacion - Radiografia.jpg';
+import mama_cc_mag from './MAMA CC MAG.jpg';
 import mama_cv from './MAMA CV.jpeg';
 import mama_cc_protesis_unidas from './MAMA CC PROTESIS UNIDAS.png';
 import mama_completa_protesis from './MAMA COMPLETA PROTESIS.png';
 import mama_completa_protesis_eklund from './MAMA COMPLETA PROTESIS EKLUND.png';
+import mama_completa_ax from './MAMA COMPLETA AX.png';
+
 
 // Otras imágenes
 import avatar from './AVATAR.png';
 import logo from './Logo.jpeg';
 import mama_completa_basico from './MAMA COMPLETA BASICO.jpeg';
-import axilar_derecha_izquierda from './Axilar Derecha e Izquierda.jpeg';
 import mamografo_1 from './MAMOGRAFO 1.webp';
 import mamografo_2 from './MAMOGRAFO 2.webp';
+
 
 export const MammographyImages: { [key: string]: string } = {
   // Básicas
@@ -68,6 +75,9 @@ export const MammographyImages: { [key: string]: string } = {
   // Especiales
   'MAMA CC MAG': mama_cc_mag,
   'MAMA CV': mama_cv,
+  'MAMA AX D': mama_ax_d,
+  'MAMA AX I': mama_ax_i,
+
   'MAMA CC PROTESIS UNIDAS': mama_cc_protesis_unidas,
   'MAMA COMPLETA PROTESIS': mama_completa_protesis,
   'MAMA COMPLETA PROTESIS EKLUND': mama_completa_protesis_eklund,
@@ -81,8 +91,10 @@ export const OtherImages = {
   RADIO_FINAL_BASICO: mama_completa_basico,
   RADIO_FINAL_PROTESIS: mama_completa_protesis,
   RADIO_FINAL_PROTESIS_EKLUND: mama_completa_protesis_eklund,
-  AXILAR: axilar_derecha_izquierda,
+  RADIO_FINAL_AXILAR: mama_completa_ax,
+  AXILAR: mama_completa_ax,
 };
+
 
 // Guías de Posicionamiento por tipo de proyección
 export const PositioningGuides: { [key: string]: string[] } = {
@@ -103,10 +115,13 @@ export const PositioningGuides: { [key: string]: string[] } = {
   // MAMA CV
   'MAMA CV': [mama_cv_pos],
   // MAMA CC MAG
-  'MAMA CC MAG': [proyeccion_magnificacion],
+  'MAMA CC MAG': [mama_cc_mag_pos],
   // Axilar
-  'MAMA MX MAG AXILAR': [mama_mx_mag_axilar],
+  'MAMA AX I': [mama_ax_i_pos],
 };
+
+
+
 
 export const loadProjectionDocs = async (): Promise<Record<string, any>> => {
   const response = await fetch('/data/documentacion.json');
