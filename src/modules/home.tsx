@@ -52,8 +52,8 @@ const HomeScreen = ({ onNavigate, userEmail }: any) => {
           <div className="text-left space-y-2">
             <h2 className="text-xs font-black text-primary uppercase tracking-[0.2em] mb-3">Integrantes:</h2>
             <div className="space-y-1 font-bold text-slate-700 text-sm md:text-base uppercase tracking-tight">
-              <p>Jeys Vera</p>
-              <p>Dennis Fernandez</p>
+              <p>Jeys Vera 17.581.393</p>
+              <p>Dennis Fernandez 12.654.133</p>
             </div>
           </div>
         </motion.div>
