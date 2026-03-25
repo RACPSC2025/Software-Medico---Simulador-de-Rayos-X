@@ -322,7 +322,13 @@ const EducationalWorkspace = ({
       'M-10': { kvp: 30, mas: 90 },  // MAMA CC I PROTESIS EKLUND
       'M-11': { kvp: 32, mas: 110 }, // MAMA MLO D PROTESIS EKLUND
       'M-12': { kvp: 32, mas: 110 }, // MAMA MLO I PROTESIS EKLUND
+      'M-13': { kvp: 30, mas: 100 }, // MAMA AX D
+      'M-14': { kvp: 30, mas: 100 }, // MAMA AX I
+      'M-15': { kvp: 32, mas: 120 }, // MAMA CC MAG
     };
+
+
+
     
     if (mammoParams[id]) {
       return mammoParams[id];
@@ -344,7 +350,13 @@ const EducationalWorkspace = ({
           { title: 'MAMA CC I', id: 'M-02', img: MammographyImages['MAMA CC I'], hasProtesis: false },
           { title: 'MAMA MLO D', id: 'M-03', img: MammographyImages['MAMA MLO D'], hasProtesis: false },
           { title: 'MAMA MLO I', id: 'M-04', img: MammographyImages['MAMA MLO I'], hasProtesis: false },
+          { title: 'MAMA AX D', id: 'M-13', img: MammographyImages['MAMA AX D'], hasProtesis: false },
+          { title: 'MAMA AX I', id: 'M-14', img: MammographyImages['MAMA AX I'], hasProtesis: false },
+          { title: 'MAMA CC MAG', id: 'M-15', img: MammographyImages['MAMA CC MAG'], hasProtesis: false },
           // Otras proyecciones de Tórax
+
+
+
           { title: 'TORAX PA', id: 'TX-01', img: XRayImages.chest['TORAX PA'], hasProtesis: false },
           { title: 'TORAX RF', id: 'TX-02', img: XRayImages.chest['TORAX RF'], hasProtesis: false },
           { title: 'TORAX LRT', id: 'TX-03', img: XRayImages.chest['TORAX LRT'], hasProtesis: false },
@@ -367,7 +379,13 @@ const EducationalWorkspace = ({
         { title: 'MAMA CC I PROTESIS EKLUND', id: 'M-10', img: MammographyImages['MAMA CC I PROTESIS EKLUND'], hasProtesis: true, isEklund: true },
         { title: 'MAMA MLO D PROTESIS EKLUND', id: 'M-11', img: MammographyImages['MAMA MLO D PROTESIS EKLUND'], hasProtesis: true, isEklund: true },
         { title: 'MAMA MLO I PROTESIS EKLUND', id: 'M-12', img: MammographyImages['MAMA MLO I PROTESIS EKLUND'], hasProtesis: true, isEklund: true },
+        { title: 'MAMA AX D', id: 'M-13', img: MammographyImages['MAMA AX D'], hasProtesis: false },
+        { title: 'MAMA AX I', id: 'M-14', img: MammographyImages['MAMA AX I'], hasProtesis: false },
+        { title: 'MAMA CC MAG', id: 'M-15', img: MammographyImages['MAMA CC MAG'], hasProtesis: false },
         // Otras proyecciones de Tórax
+
+
+
         { title: 'TORAX PA', id: 'TX-01', img: XRayImages.chest['TORAX PA'], hasProtesis: false },
         { title: 'TORAX RF', id: 'TX-02', img: XRayImages.chest['TORAX RF'], hasProtesis: false },
         { title: 'TORAX LRT', id: 'TX-03', img: XRayImages.chest['TORAX LRT'], hasProtesis: false },

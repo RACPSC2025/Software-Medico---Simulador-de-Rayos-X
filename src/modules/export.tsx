@@ -8,8 +8,11 @@ import {
   User,
   Shield,
   Activity,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Eye,
+  X
 } from 'lucide-react';
+
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from "../components/ui";
 import { Patient } from "../types";
@@ -26,20 +29,47 @@ interface ExportScreenProps {
 const ExportScreen = ({ patient, capturedImages, workspaceState, onBack, onFinish }: ExportScreenProps) => {
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [previewImage, setPreviewImage] = useState<{ src: string, title: string } | null>(null);
+
 
   const capturedList = Object.keys(capturedImages);
   const totalCaptured = capturedList.length;
   const protesisType = workspaceState?.protesisType || 'sin-protesis';
   
-  // Determinar imágenes finales según tipo de paciente
-  const finalImages = protesisType === 'con-protesis' 
-    ? [
-        { src: OtherImages.RADIO_FINAL_PROTESIS, title: 'MAMA COMPLETA PROTESIS', subtitle: '4 proyecciones con implante' },
-        { src: OtherImages.RADIO_FINAL_PROTESIS_EKLUND, title: 'MAMA COMPLETA PROTESIS EKLUND', subtitle: 'Técnica de desplazamiento de implante' }
-      ]
-    : [
-        { src: OtherImages.RADIO_FINAL_BASICO, title: 'MAMA COMPLETA BASICO', subtitle: '4 proyecciones estándar' }
-      ];
+  // Determinar imágenes finales según estudios capturados (usando IDs internos M-01 a M-14)
+  const hasAllBasic = ['M-01', 'M-02', 'M-03', 'M-04'].every(id => capturedList.includes(id));
+  const hasAllProtesis = ['M-05', 'M-06', 'M-07', 'M-08'].every(id => capturedList.includes(id));
+  const hasAllEklund = ['M-09', 'M-10', 'M-11', 'M-12'].every(id => capturedList.includes(id));
+  const hasBothAx = ['M-13', 'M-14'].every(id => capturedList.includes(id));
+
+  const finalImages = [];
+
+  
+  // Agregar resultados combinados si se completaron los juegos
+  if (hasAllBasic) {
+    finalImages.push({ src: OtherImages.RADIO_FINAL_BASICO, title: 'MAMA COMPLETA BASICO', subtitle: '4 proyecciones estándar' });
+  }
+
+  if (hasAllProtesis) {
+    finalImages.push({ src: OtherImages.RADIO_FINAL_PROTESIS, title: 'MAMA COMPLETA PROTESIS', subtitle: '4 proyecciones con implante' });
+  }
+
+  if (hasAllEklund) {
+    finalImages.push({ src: OtherImages.RADIO_FINAL_PROTESIS_EKLUND, title: 'MAMA COMPLETA PROTESIS EKLUND', subtitle: 'Técnica de desplazamiento de implante' });
+  }
+
+  if (hasBothAx) {
+    finalImages.push({ src: OtherImages.RADIO_FINAL_AXILAR, title: 'MAMA COMPLETA AX', subtitle: 'Estudio axilar bilateral' });
+  }
+
+  // Si no hay resultados combinados pero hay imágenes capturadas, mostrar la primera o una genérica
+  if (finalImages.length === 0 && totalCaptured > 0) {
+    finalImages.push({ 
+      src: capturedImages[capturedList[0]], 
+      title: 'VISTA CAPTURADA', 
+      subtitle: `Previsualización de ${capturedList[0]}` 
+    });
+  }
 
   const handleSave = () => {
     setIsSaving(true);
@@ -171,15 +201,26 @@ const ExportScreen = ({ patient, capturedImages, workspaceState, onBack, onFinis
                   <div key={idx} className="space-y-3">
                     {/* External Header - Only for descriptive titles */}
                     <div className="flex items-center justify-between px-2">
-                      <div className="bg-primary/20 border border-primary/50 px-3 py-1.5 rounded-lg">
-                        <p className="text-[10px] font-black text-primary uppercase tracking-widest">{img.title}</p>
+                      <div className="flex items-center gap-2">
+                        <div className="bg-primary border border-primary/50 px-3 py-1.5 rounded-lg shadow-lg shadow-primary/20">
+                          <p className="text-[10px] font-black text-white uppercase tracking-widest">{img.title}</p>
+                        </div>
+                        <button 
+                          onClick={() => setPreviewImage({ src: img.src, title: img.title })}
+                          className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg border border-slate-700 transition-all shadow-md group/zoom"
+                          title="Ampliar Imagen"
+                        >
+                          <Eye size={14} className="group-hover/zoom:scale-110 transition-transform" />
+                        </button>
                       </div>
                       {img.title.includes('EKLUND') && (
-                        <div className="bg-amber-500/20 px-3 py-1.5 rounded-lg border border-amber-500/50">
-                          <p className="text-[9px] font-black text-amber-500 uppercase tracking-widest">Técnica Eklund</p>
+                        <div className="bg-amber-500 px-3 py-1.5 rounded-lg border border-amber-500/50 shadow-lg shadow-amber-500/20">
+                          <p className="text-[9px] font-black text-white uppercase tracking-widest">Técnica Eklund</p>
                         </div>
                       )}
                     </div>
+
+
 
                     <div className="aspect-[4/3] bg-black rounded-3xl overflow-hidden border border-slate-800 relative shadow-2xl group/image">
                       {/* Simulated Grid Overlay */}
@@ -220,7 +261,63 @@ const ExportScreen = ({ patient, capturedImages, workspaceState, onBack, onFinis
         </div>
       </div>
 
+      {/* Full Screen Image Preview Modal */}
+      <AnimatePresence>
+        {previewImage && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[70] bg-black/95 backdrop-blur-xl flex flex-col p-4 md:p-8"
+          >
+            <div className="flex items-center justify-between mb-6 max-w-6xl mx-auto w-full">
+              <div className="flex flex-col gap-1">
+                <h3 className="text-white font-black text-xl uppercase tracking-widest">{previewImage.title}</h3>
+                <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Vista Maximizada en Alta Resolución</p>
+              </div>
+              <button 
+                onClick={() => setPreviewImage(null)}
+                className="size-12 bg-white/10 hover:bg-white/20 text-white rounded-2xl flex items-center justify-center transition-colors border border-white/10 group"
+              >
+                <X size={24} className="group-hover:rotate-90 transition-transform duration-300" />
+              </button>
+            </div>
+            
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="flex-1 max-w-6xl mx-auto w-full bg-slate-900 rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl relative flex items-center justify-center"
+            >
+              <img 
+                src={previewImage.src} 
+                className="w-full h-full object-contain grayscale" 
+                alt={previewImage.title} 
+              />
+              
+              {/* Corner Info Overlays (Radiology style) */}
+              <div className="absolute top-10 left-10 pointer-events-none drop-shadow-lg">
+                <div className="flex flex-col gap-1 font-mono text-[10px] font-bold text-white/50 uppercase">
+                  <p>PACIENTE: {patient?.name}</p>
+                  <p>ID: {patient?.id}</p>
+                  <p>EDAD: {patient?.age}</p>
+                </div>
+              </div>
+              
+              <div className="absolute bottom-10 right-10 pointer-events-none drop-shadow-lg text-right">
+                <div className="flex flex-col gap-1 font-mono text-[10px] font-bold text-white/50 uppercase">
+                  <p>ESTUDIO: MAMA DIGITAL</p>
+                  <p>MODALIDAD: MG</p>
+                  <p>FECHA: {new Date().toLocaleDateString()}</p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Success Notification Animation */}
+
       <AnimatePresence>
         {showSuccess && (
           <motion.div 
